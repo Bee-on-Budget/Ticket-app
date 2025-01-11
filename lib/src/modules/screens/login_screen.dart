@@ -1,103 +1,8 @@
-// import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:ticket_app/src/widgets/form_field_outline.dart';
-//
-// class LoginScreen extends StatefulWidget {
-//   const LoginScreen({super.key});
-//
-//   @override
-//   State<LoginScreen> createState() => _LoginScreenState();
-// }
-//
-// class _LoginScreenState extends State<LoginScreen> {
-//   final TextEditingController _emailController = TextEditingController();
-//   final TextEditingController _passwordController = TextEditingController();
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
-//
-//   String errorMessage = '';
-//
-//   Future<void> _login() async {
-//     try {
-//       await _auth.signInWithEmailAndPassword(
-//         email: _emailController.text.trim(),
-//         password: _passwordController.text.trim(),
-//       );
-//
-//       if (mounted) {
-//         Navigator.pushReplacementNamed(context, '/home');
-//       }
-//     } catch (e) {
-//       setState(() {
-//         errorMessage = e.toString();
-//       });
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           children: [
-//             SizedBox(height: 50),
-//             Text(
-//               "Login Screen",
-//               textAlign: TextAlign.center,
-//               style: Theme.of(context).textTheme.headlineSmall,
-//             ),
-//             SizedBox(height: 30),
-//             FormFieldOutline(
-//               controller: _emailController,
-//               label: "Email",
-//             ),
-//             TextField(
-//               controller: _emailController,
-//               decoration: InputDecoration(
-//                 labelText: 'Email',
-//                 border: OutlineInputBorder(),
-//               ),
-//               keyboardType: TextInputType.emailAddress,
-//             ),
-//             SizedBox(height: 16),
-//             TextField(
-//               controller: _passwordController,
-//               decoration: InputDecoration(
-//                 labelText: 'Password',
-//                 border: OutlineInputBorder(),
-//               ),
-//               obscureText: true,
-//             ),
-//             SizedBox(height: 24),
-//             ElevatedButton(
-//               onPressed: _login,
-//               child: Text('Login'),
-//             ),
-//             SizedBox(height: 16),
-//             if (errorMessage.isNotEmpty)
-//               Text(
-//                 errorMessage,
-//                 style: TextStyle(color: Colors.red),
-//               ),
-//             SizedBox(height: 16),
-//             TextButton(
-//               onPressed: () =>
-//                   Navigator.pushReplacementNamed(context, '/register'),
-//               child: Text('Don\'t have an account? Register here'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ticket_app/src/modules/screens/register_screen.dart';
-
 import '../../widgets/form_field_outline.dart';
 import '../../widgets/submit_button.dart';
 
@@ -109,42 +14,37 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  void signUserIn() async {
-    try {
-      // Masuk menggunakan email dan password
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
-    } on FirebaseAuthException catch (e) {
-      showErrorMessage(e.code);
-    }
-  }
-
-  void showErrorMessage(String message) {
-    // Tampilkan dialog dengan pesan error
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(message),
-          );
-        });
-  }
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String _errorMessage = "";
 
+  Future<void> _login() async {
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    }
+  }
+
   void validateEmail(String val) {
     if (val.isEmpty) {
-      // Validasi jika email kosong
       setState(() {
-        _errorMessage = "Email tidak boleh kosong";
+        _errorMessage = "Email cannot be empty";
       });
     } else if (!EmailValidator.validate(val, true)) {
-      // Validasi jika email tidak valid
       setState(() {
-        _errorMessage = "Alamat Email tidak valid";
+        _errorMessage = "Invalid email address";
       });
     } else {
       setState(() {
@@ -212,10 +112,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   FormFieldOutline(
                                     onChanged: (() {
-                                      validateEmail(emailController.text);
+                                      validateEmail(_emailController.text);
                                     }),
-                                    controller: emailController,
-                                    hintText: "masukkan email anda",
+                                    controller: _emailController,
+                                    hintText: "Enter your email",
                                     obscureText: false,
                                     prefixIcon: const Icon(Icons.mail_outline),
                                   ),
@@ -244,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     height: 10,
                                   ),
                                   FormFieldOutline(
-                                    controller: passwordController,
+                                    controller: _passwordController,
                                     hintText: "**************",
                                     obscureText: true,
                                     prefixIcon: const Icon(Icons.lock_outline),
@@ -253,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     height: 20,
                                   ),
                                   SubmitButton(
-                                    onPressed: signUserIn,
+                                    onPressed: _login,
                                     buttonText: 'Submit',
                                   ),
                                   const SizedBox(
@@ -264,14 +164,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                         const EdgeInsets.fromLTRB(35, 0, 0, 0),
                                     child: Row(
                                       children: [
-                                        Text("Belum punya akun?",
+                                        Text("Don't have an account?",
                                             style: GoogleFonts.poppins(
                                               fontSize: 15,
                                               color: Color(0XFF8D8D8D),
                                             )),
                                         TextButton(
                                           child: Text(
-                                            "Daftar",
+                                            "Register",
                                             style: GoogleFonts.poppins(
                                               fontSize: 15,
                                               color: Color(0XFF44564A),
