@@ -37,6 +37,8 @@ dependencies:
   firebase_core: ^3.10.0
   firebase_auth: ^5.4.0
   firebase_ui_auth: ^1.16.0
+  google_fonts: ^6.2.1
+  email_validator: ^2.1.17
   # sign_in_with_apple: ^3.0.0 # For Apple Sign-In
   
 dev_dependencies:
