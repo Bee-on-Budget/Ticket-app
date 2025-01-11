@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 
 class FormFieldOutline extends StatelessWidget {
-  const FormFieldOutline({
-    super.key,
-    required String label,
-    required TextEditingController controller,
-  })  : _label = label,
-        _controller = controller;
+  final String label;
+  final TextEditingController controller;
+  final bool obscureText;
 
-  final String _label;
-  final TextEditingController _controller;
+  const FormFieldOutline({
+    required this.label,
+    required this.controller,
+    this.obscureText = false,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: _controller,
+      controller: controller,
+      obscureText: obscureText,
       decoration: InputDecoration(
-          prefixIcon: Icon(
-            Icons.email,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          border: OutlineInputBorder(),
-          labelText: _label),
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
     );
   }
 }

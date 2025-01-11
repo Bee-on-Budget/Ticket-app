@@ -1,47 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
+class RegistrationScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String errorMessage = '';
+  void _register(BuildContext context) async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
 
-  Future<void> _login() async {
     try {
-      await _auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
-      });
+      // Handle errors (e.g., show error message)
+      print(e);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(
+        title: Text('Register'),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 50),
-            Text(
-              "Login Screen",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            SizedBox(height: 30),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -61,20 +50,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _login,
-              child: Text('Login'),
+              onPressed: () => _register(context),
+              child: Text('Register'),
             ),
             SizedBox(height: 16),
-            if (errorMessage.isNotEmpty)
-              Text(
-                errorMessage,
-                style: TextStyle(color: Colors.red),
-              ),
-            SizedBox(height: 16),
             TextButton(
-              onPressed: () =>
-                  Navigator.pushReplacementNamed(context, '/register'),
-              child: Text('Don\'t have an account? Register here'),
+              onPressed: () => Navigator.pushReplacementNamed(
+                  context, '/login'), // Navigate to Login screen
+              child: Text('Already have an account? Login here'),
             ),
           ],
         ),

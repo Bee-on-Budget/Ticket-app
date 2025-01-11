@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'modules/screens/login_screen.dart';
+import 'modules/screens/register_screen.dart';
+import 'modules/screens/home_screen.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -12,12 +13,12 @@ class App extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Ticket App"),
-        ),
-        body: LoginScreen(),
-      ),
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegistrationScreen(),
+        '/home': (context) => HomeScreen(),
+      },
     );
   }
 }
