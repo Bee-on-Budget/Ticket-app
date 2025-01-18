@@ -17,7 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   String _errorMessage = "";
 
   Future<void> _login() async {
@@ -92,9 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Color(0xFF4F4F4F),
                               ),
                             ),
-                            const SizedBox(
-                              height: 20,
-                            ),
+                            const SizedBox(height: 20),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(15, 0, 0, 20),
                               child: Column(
@@ -107,13 +104,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: Color(0xFF8D8D8D),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
+                                  const SizedBox(height: 10),
                                   FormFieldOutline(
-                                    onChanged: (() {
+                                    onChanged: () {
                                       validateEmail(_emailController.text);
-                                    }),
+                                    },
                                     controller: _emailController,
                                     hintText: "Enter your email",
                                     obscureText: false,
@@ -130,9 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
+                                  const SizedBox(height: 10),
                                   Text(
                                     "Password",
                                     style: GoogleFonts.poppins(
@@ -140,35 +133,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: Color(0XFF8D8D8D),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
+                                  const SizedBox(height: 10),
                                   FormFieldOutline(
                                     controller: _passwordController,
                                     hintText: "**************",
                                     obscureText: true,
                                     prefixIcon: const Icon(Icons.lock_outline),
                                   ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
+                                  const SizedBox(height: 20),
                                   SubmitButton(
                                     onPressed: _login,
                                     buttonText: 'Submit',
                                   ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
+                                  const SizedBox(height: 12),
                                   Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(35, 0, 0, 0),
                                     child: Row(
                                       children: [
-                                        Text("Don't have an account?",
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 15,
-                                              color: Color(0XFF8D8D8D),
-                                            )),
+                                        Text(
+                                          "Don't have an account?",
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 15,
+                                            color: Color(0XFF8D8D8D),
+                                          ),
+                                        ),
                                         TextButton(
                                           child: Text(
                                             "Register",
@@ -204,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ],

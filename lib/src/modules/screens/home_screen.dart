@@ -5,81 +5,70 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class HomeScreen extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _signOut(BuildContext context) async {
-    try {
-      await _auth.signOut();
-      Navigator.pushReplacementNamed(context, '/login');
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error signing out: $e')),
-      );
-    }
+  Future<DocumentSnapshot> _getUserData(String uid) {
+    return FirebaseFirestore.instance.collection('users').doc(uid).get();
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    await _auth.signOut();
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override
   Widget build(BuildContext context) {
-    User? user = _auth.currentUser; // Get the currently logged-in user
-
+    User? user = _auth.currentUser;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: const Text('Home'),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () => _signOut(context),
-            tooltip: 'Sign Out',
           ),
         ],
       ),
-      body: FutureBuilder<DocumentSnapshot>(
-        future:
-            FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: user == null
+          ? const Center(child: Text('No user signed in.'))
+          : FutureBuilder<DocumentSnapshot>(
+              future: _getUserData(user.uid),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                if (!snapshot.hasData || snapshot.data == null) {
+                  return const Center(child: Text('User data not found.'));
+                }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+                // Safe way to get data from Firestore
+                var userData = snapshot.data!.data() as Map<String, dynamic>?;
+                if (userData == null) {
+                  return const Center(child: Text('No user data available.'));
+                }
 
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('User data not found'));
-          }
+                String fullName = userData['fullName'] ?? 'User';
+                String role = userData['role'] ?? 'user';
 
-          var userData = snapshot.data!.data() as Map<String, dynamic>;
-
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.blueAccent,
-                    child: Text(
-                      user?.email?.substring(0, 1).toUpperCase() ?? '',
-                      style: TextStyle(fontSize: 32, color: Colors.white),
-                    ),
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Welcome, $fullName'),
+                      Text('Role: $role'),
+                      if (role == 'admin')
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/adminPanel');
+                          },
+                          child: const Text('Go to Admin Panel'),
+                        ),
+                    ],
                   ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Welcome, ${userData['fullName'] ?? 'User'}',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  SizedBox(height: 8),
-                  if (user != null)
-                    Text(
-                      'User ID: ${user.uid}',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
