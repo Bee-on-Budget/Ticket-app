@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -57,6 +59,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double width = min(MediaQuery.of(context).size.width * 0.3, 250);
+    final double height = max(530, MediaQuery.of(context).size.height * 0.75);
+    // TODO:: Remove this layout
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -196,7 +201,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Transform.translate(
                       offset: const Offset(0, -253),
                       child: Image.asset(
-                        'assets/Images/plants2.png',
+                        'assets/images/logo-new.png',
                         scale: 1.5,
                         width: double.infinity,
                       ),

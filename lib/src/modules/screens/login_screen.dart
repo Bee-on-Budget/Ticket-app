@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -55,137 +57,134 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double width = min(MediaQuery.of(context).size.width * 0.3, 250);
+    final double height = max(530, MediaQuery.of(context).size.height * 0.75);
+    // TODO:: add keyboard_dismisser
+    // TODO:: add form for submit
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.green,
-        body: ListView(
-          padding: const EdgeInsets.fromLTRB(0, 400, 0, 0),
-          shrinkWrap: true,
-          reverse: true,
+        backgroundColor: Color(0xFF3D4B3F),
+        body: Stack(
+          alignment: Alignment.center,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                      height: 535,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFFFFFFF),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(40),
-                          topRight: Radius.circular(40),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: EdgeInsets.only(top: 75),
+                height: height,
+                // width: double.infinity,
+                // constraints: BoxConstraints.,
+                alignment: Alignment.bottomCenter,
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFFFFF),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Log In",
+                        style: GoogleFonts.poppins(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF4F4F4F),
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 0, 0, 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Log In",
+                              "Email",
                               style: GoogleFonts.poppins(
-                                fontSize: 40,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF4F4F4F),
+                                fontSize: 18,
+                                color: Color(0xFF8D8D8D),
                               ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            FormFieldOutline(
+                              onChanged: (() {
+                                validateEmail(_emailController.text);
+                              }),
+                              controller: _emailController,
+                              hintText: "Enter your email",
+                              obscureText: false,
+                              prefixIcon: const Icon(Icons.mail_outline),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                              child: Text(
+                                _errorMessage,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              "Password",
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                color: Color(0XFF8D8D8D),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            FormFieldOutline(
+                              controller: _passwordController,
+                              hintText: "**************",
+                              obscureText: true,
+                              prefixIcon: const Icon(Icons.lock_outline),
                             ),
                             const SizedBox(
                               height: 20,
                             ),
+                            SubmitButton(
+                              onPressed: _login,
+                              buttonText: 'Submit',
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 0, 0, 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    "Email",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 18,
-                                      color: Color(0xFF8D8D8D),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  FormFieldOutline(
-                                    onChanged: (() {
-                                      validateEmail(_emailController.text);
-                                    }),
-                                    controller: _emailController,
-                                    hintText: "Enter your email",
-                                    obscureText: false,
-                                    prefixIcon: const Icon(Icons.mail_outline),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                                    child: Text(
-                                      _errorMessage,
+                                  Text("Don't have an account?",
                                       style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        color: Colors.red,
+                                        fontSize: 15,
+                                        color: Color(0XFF8D8D8D),
+                                      )),
+                                  TextButton(
+                                    child: Text(
+                                      "Register",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        color: Color(0XFF44564A),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Password",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 18,
-                                      color: Color(0XFF8D8D8D),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  FormFieldOutline(
-                                    controller: _passwordController,
-                                    hintText: "**************",
-                                    obscureText: true,
-                                    prefixIcon: const Icon(Icons.lock_outline),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  SubmitButton(
-                                    onPressed: _login,
-                                    buttonText: 'Submit',
-                                  ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(35, 0, 0, 0),
-                                    child: Row(
-                                      children: [
-                                        Text("Don't have an account?",
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 15,
-                                              color: Color(0XFF8D8D8D),
-                                            )),
-                                        TextButton(
-                                          child: Text(
-                                            "Register",
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 15,
-                                              color: Color(0XFF44564A),
-                                            ),
-                                          ),
-                                          onPressed: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  RegistrationScreen(),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                    onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            RegistrationScreen(),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -194,18 +193,23 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                       ),
-                    ),
-                    Transform.translate(
-                      offset: const Offset(0, -253),
-                      child: Image.asset(
-                        'assets/Images/plants2.png',
-                        scale: 1.5,
-                        width: double.infinity,
-                      ),
-                    ),
-                  ],
-                )
-              ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: height - (width * 0.5),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Color(0xFF3D4B3F),
+                  borderRadius: BorderRadius.circular(360),
+                ),
+                child: Image.asset(
+                  'assets/images/logo-nobg.png',
+                  width: width,
+                ),
+              ),
             ),
           ],
         ),
