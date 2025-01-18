@@ -4,6 +4,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 
 import '../../widgets/form_field_outline.dart';
 import '../../widgets/submit_button.dart';
@@ -18,18 +19,30 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _errorMessage = "";
 
   Future<void> _register() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
+    String fullName = _fullNameController.text.trim();
 
     try {
-      await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      User? user = userCredential.user;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': email,
+          'fullName': fullName,
+          'role': 'user',
+        });
+      }
 
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/home');
@@ -107,6 +120,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Text(
+                                    "Full Name",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 18,
+                                      color: Color(0xFF8D8D8D),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  FormFieldOutline(
+                                    controller: _fullNameController,
+                                    hintText: "Enter your full name",
+                                    obscureText: false,
+                                    prefixIcon:
+                                        const Icon(Icons.person_outline),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
                                   Text(
                                     "Email",
                                     style: GoogleFonts.poppins(
