@@ -4,8 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 class SubmitButton extends StatelessWidget {
   final Function()? onPressed;
   final String buttonText;
-  const SubmitButton(
-      {super.key, required this.onPressed, required this.buttonText});
+
+  const SubmitButton({
+    super.key,
+    required this.onPressed,
+    required this.buttonText,
+  });
 
   @override
   Widget build(BuildContext context) {
