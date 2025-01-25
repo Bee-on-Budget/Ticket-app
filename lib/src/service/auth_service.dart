@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
-  // Register a new user and add their data to Firestore
+  // Register a new user and add their data to FireStore
   Future<void> registerUser(
       String email, String password, String fullName, String role) async {
     try {
@@ -16,14 +17,16 @@ class AuthService {
       );
 
       // Save user info in Firestore
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+      await _fireStore.collection('users').doc(userCredential.user!.uid).set({
         'fullName': fullName,
         'email': email,
         'role': role,
         'createdAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error during registration: $e');
+      if (kDebugMode) {
+        print('Error during registration: $e');
+      }
       rethrow;
     }
   }
@@ -31,9 +34,9 @@ class AuthService {
   Future<void> checkAndAddUserInfo(User user) async {
     try {
       DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(user.uid).get();
+          await _fireStore.collection('users').doc(user.uid).get();
       if (!userDoc.exists) {
-        await _firestore.collection('users').doc(user.uid).set({
+        await _fireStore.collection('users').doc(user.uid).set({
           'fullName': user.displayName ?? 'New User',
           'email': user.email,
           'role': 'user',
@@ -41,13 +44,17 @@ class AuthService {
         });
       }
     } catch (e) {
-      print('Error checking/adding user info: $e');
+      if (kDebugMode) {
+        print('Error checking/adding user info: $e');
+      }
     }
   }
 
   Future<UserCredential> signIn(String email, String password) async {
     return await _auth.signInWithEmailAndPassword(
-        email: email, password: password);
+      email: email,
+      password: password,
+    );
   }
 
   Future<void> signOut() async {
