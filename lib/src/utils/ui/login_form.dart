@@ -1,7 +1,7 @@
-// import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ticket_app/src/service/auth_exception_handler.dart';
+import 'package:ticket_app/src/service/auth_service.dart';
 
 import '../../widgets/form_field_outline.dart';
 import '../../widgets/submit_button.dart';
@@ -17,7 +17,9 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _authService = AuthService();
   late String _email;
   late String _password;
 
@@ -29,20 +31,26 @@ class _LoginFormState extends State<LoginForm> {
     });
     widget.setLoading(true);
     if (_formKey.currentState!.validate()) {
-      final navigator = Navigator.of(context);
       await Future.delayed(Duration(seconds: 1));
       _formKey.currentState!.save();
 
-      try {
-        await _auth.signInWithEmailAndPassword(
-          email: _email,
-          password: _password,
-        );
-
-        navigator.pushReplacementNamed('/home');
-      } catch (e) {
+      final status = await _authService.login(
+        email: _email,
+        password: _password,
+      );
+      if (status == AuthStatus.successful) {
+        if (mounted) {
+          // Navigator.of(context).pushNamedAndRemoveUntil(newRouteName, predicate);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/home',
+            ModalRoute.withName('/'),
+          );
+        }
+      } else {
+        widget.setLoading(false);
+        final String error = AuthExceptionHandler.generateErrorMessage(status);
         setState(() {
-          _errorMessage = "${e}Theis is an email: $_email";
+          _errorMessage = error;
         });
       }
     }
