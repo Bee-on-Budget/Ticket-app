@@ -43,7 +43,9 @@ dependencies:
   email_validator: ^2.1.17
   keyboard_dismisser: ^3.0.0
   file_picker: ^8.1.7
-  open_file: ^3.5.10
+#  open_file: ^3.5.10
+  open_filex: ^4.6.0
+  cached_network_image: ^3.4.1
   intl: ^0.19.0
   # sign_in_with_apple: ^3.0.0 # For Apple Sign-In
   
