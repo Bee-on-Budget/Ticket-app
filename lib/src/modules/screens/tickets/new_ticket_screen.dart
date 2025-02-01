@@ -4,8 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import '../../widgets/form_field_outline.dart';
-import '../../widgets/submit_button.dart';
+import '../../../widgets/form_field_outline.dart';
+import '../../../widgets/submit_button.dart';
 
 class NewTicketScreen extends StatefulWidget {
   const NewTicketScreen({super.key});
@@ -22,7 +22,11 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   late final FirebaseAuth _auth;
   late final FirebaseStorage _storage;
 
-  List<File> _selectedFiles = [];
+  static const _maxFiles = 10;
+  static const _maxFileSizeMB = 5;
+  static const _maxFileSizeBytes = _maxFileSizeMB * 1024 * 1024;
+
+  final List<File> _selectedFiles = [];
   bool _isUploading = false;
 
   @override
@@ -66,7 +70,6 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
 
                 _buildFileUploadSection(),
                 const SizedBox(height: 20),
-
                 SubmitButton(
                   onPressed: _isUploading ? null : _submitTicket,
                   buttonText: _isUploading ? 'Uploading...' : 'Submit',
@@ -82,34 +85,50 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   Widget _buildFileUploadSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 10,
       children: [
-        ElevatedButton.icon(
-          icon: const Icon(Icons.attach_file),
-          label: const Text('Attach Files'),
-          onPressed: _isUploading ? null : _pickFiles,
+        Row(
+          spacing: 10,
+          children: [
+            ElevatedButton.icon(
+              icon: const Icon(Icons.attach_file),
+              label: const Text('Attach Files'),
+              onPressed: _isUploading ? null : _pickFiles,
+            ),
+            Text(
+              '${_selectedFiles.length}/$_maxFiles files',
+              style: TextStyle(
+                color: _selectedFiles.length >= _maxFiles
+                    ? Colors.red
+                    : Theme.of(context).textTheme.bodySmall?.color,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 10),
-
         if (_selectedFiles.isNotEmpty)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Attached Files:'),
               const SizedBox(height: 8),
-              ..._selectedFiles.map((file) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  children: [
-                    const Icon(Icons.insert_drive_file, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(file.path.split('/').last)),
-                    IconButton(
-                      icon: const Icon(Icons.close, size: 18),
-                      onPressed: () => _removeFile(file),
-                    ),
-                  ],
+              ..._selectedFiles.map(
+                (file) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.insert_drive_file, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(file.path.split('/').last),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 18),
+                        onPressed: () => _removeFile(file),
+                      ),
+                    ],
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
       ],
@@ -117,15 +136,61 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   }
 
   Future<void> _pickFiles() async {
-    final result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.any,
-    );
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.any,
+      );
 
-    if (result != null) {
-      setState(() {
-        _selectedFiles = result.paths.map((path) => File(path!)).toList();
-      });
+      if (result != null) {
+        final newFileCount = result.files.length;
+        final totalFiles = _selectedFiles.length + newFileCount;
+
+        if (totalFiles > _maxFiles) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Maximum $_maxFiles files allowed"),
+              ),
+            );
+          }
+          return;
+        }
+
+        final overSizedFiles = result.files
+            .where((file) => file.size > _maxFileSizeBytes)
+            .toList();
+
+        if (overSizedFiles.isNotEmpty) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "${overSizedFiles.length} file(s) exceed $_maxFileSizeBytes MB limits",
+                ),
+              ),
+            );
+          }
+          return;
+        }
+
+        setState(() {
+          _selectedFiles.addAll(
+            result.paths
+                .map(
+                  (path) => File(path!),
+                )
+                .toList(),
+          );
+          // _selectedFiles = result.paths.map((path) => File(path!)).toList();
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error selecting files: ${e.toString()}')),
+        );
+      }
     }
   }
 
@@ -159,9 +224,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         final List<String> fileUrls = [];
         for (final file in _selectedFiles) {
           final fileName = file.path.split('/').last;
-          final storageRef = _storage
-              .ref()
-              .child('tickets/${ticketRef.id}/files/$fileName');
+          final storageRef =
+              _storage.ref().child('tickets/${ticketRef.id}/files/$fileName');
 
           await storageRef.putFile(file);
           final downloadUrl = await storageRef.getDownloadURL();
