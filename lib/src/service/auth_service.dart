@@ -1,63 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+
+import 'auth_exception_handler.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+  AuthStatus _status = AuthStatus.unknown;
 
-  // Register a new user and add their data to FireStore
-  Future<void> registerUser(
-      String email, String password, String fullName, String role) async {
+  Future<AuthStatus> login({
+    required String email,
+    required String password,
+  }) async {
     try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      // Save user info in Firestore
-      await _fireStore.collection('users').doc(userCredential.user!.uid).set({
-        'fullName': fullName,
-        'email': email,
-        'role': role,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error during registration: $e');
-      }
-      rethrow;
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      _status = AuthStatus.successful;
+    } on  FirebaseAuthException catch (e) {
+      _status = AuthExceptionHandler.handleAuthException(e);
     }
+    return _status;
   }
 
-  Future<void> checkAndAddUserInfo(User user) async {
-    try {
-      DocumentSnapshot userDoc =
-          await _fireStore.collection('users').doc(user.uid).get();
-      if (!userDoc.exists) {
-        await _fireStore.collection('users').doc(user.uid).set({
-          'fullName': user.displayName ?? 'New User',
-          'email': user.email,
-          'role': 'user',
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error checking/adding user info: $e');
-      }
-    }
+  Future<AuthStatus> resetPassword({required String email}) async {
+    await _auth
+        .sendPasswordResetEmail(email: email)
+        .then((value) => _status = AuthStatus.successful)
+        .catchError((e) => _status = AuthExceptionHandler.handleAuthException(e));
+    return _status;
   }
 
-  Future<UserCredential> signIn(String email, String password) async {
-    return await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-  }
-
-  Future<void> signOut() async {
+  Future<void> logout() async {
     await _auth.signOut();
   }
 }
