@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
+import 'package:ticket_app/src/service/auth_service.dart';
+import 'package:ticket_app/src/widgets/ticket_card.dart';
 
-import '../new_ticket_screen.dart';
-import '../ticket_detail_screen.dart';
+import '../tickets/new_ticket_screen.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final AuthService _authService = AuthService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
@@ -25,14 +26,13 @@ class HomePage extends StatelessWidget {
               color: const Color(0xFF3D4B3F),
             ),
             onPressed: () async {
-              await _auth.signOut();
+              await _authService.logout();
               navigator.pushReplacementNamed('/login');
             },
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF3D4B3F),
         onPressed: () {
           Navigator.push(
             context,
@@ -77,65 +77,65 @@ class HomePage extends StatelessWidget {
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             var ticket = snapshot.data!.docs[index];
-            return _buildTicketItem(context, ticket);
+            return TicketCard(ticket: ticket);
           },
         );
       },
     );
   }
 
-  Widget _buildTicketItem(BuildContext context, DocumentSnapshot ticket) {
-    final data = ticket.data() as Map<String, dynamic>;
-    final createdDate = (data['createdDate'] as Timestamp).toDate();
-    final status = data['status'] ?? '';
+  // Widget _buildTicketItem(BuildContext context, DocumentSnapshot ticket) {
+  //   final data = ticket.data() as Map<String, dynamic>;
+  //   final createdDate = (data['createdDate'] as Timestamp).toDate();
+  //   final status = data['status'] ?? '';
+  //
+  //   return Card(
+  //     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+  //     child: ListTile(
+  //       title: Text(data['title']),
+  //       subtitle: Text(DateFormat.yMMMd().format(createdDate)),
+  //       trailing: Chip(
+  //         label: Text(
+  //           _getStatusString(status),
+  //           style: TextStyle(color: Colors.white),
+  //         ),
+  //         backgroundColor: _getStatusColor(status),
+  //       ),
+  //       onTap: () {
+  //         Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => TicketDetailScreen(ticket: data),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: ListTile(
-        title: Text(data['title']),
-        subtitle: Text(DateFormat.yMMMd().format(createdDate)),
-        trailing: Chip(
-          label: Text(
-            _getStatusString(status),
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: _getStatusColor(status),
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TicketDetailScreen(ticket: data),
-            ),
-          );
-        },
-      ),
-    );
-  }
+  // String _getStatusString(String status) {
+  //   switch (status) {
+  //     case 'Open':
+  //     case 'In Progress':
+  //     case 'Closed':
+  //       return status;
+  //     default:
+  //       return 'Unknown';
+  //   }
+  // }
 
-  String _getStatusString(String status) {
-    switch (status) {
-      case 'Open':
-      case 'In Progress':
-      case 'Closed':
-        return status;
-      default:
-        return 'Unknown';
-    }
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'Open':
-        return Colors.green;
-      case 'In Progress':
-        return Colors.orange;
-      case 'Closed':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
+  // Color _getStatusColor(String status) {
+  //   switch (status) {
+  //     case 'Open':
+  //       return Colors.green;
+  //     case 'In Progress':
+  //       return Colors.orange;
+  //     case 'Closed':
+  //       return Colors.red;
+  //     default:
+  //       return Colors.grey;
+  //   }
+  // }
 }
 
 // import 'package:flutter/material.dart';
