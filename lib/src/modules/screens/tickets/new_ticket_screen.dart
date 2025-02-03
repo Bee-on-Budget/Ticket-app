@@ -99,7 +99,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
               '${_selectedFiles.length}/$_maxFiles files',
               style: TextStyle(
                 color: _selectedFiles.length >= _maxFiles
-                    ? Colors.red
+                    ? Theme.of(context).colorScheme.error
                     : Theme.of(context).textTheme.bodySmall?.color,
               ),
             ),
