@@ -205,30 +205,38 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     if (user == null) return;
 
     setState(() => _isUploading = true);
-
     try {
+      SynchronizedTime.initialize();
       final ticketRef = await _firestore.collection('tickets').add({
         'userId': user.uid,
         'title': _titleController.text,
         'description': _descriptionController.text,
-        'createdDate': Timestamp.now(),
+        'createdDate': SynchronizedTime.now(),
         'status': 'Open',
-        'files': [],
       });
 
       if (_selectedFiles.isNotEmpty) {
-        final List<String> fileUrls = [];
+        final filesCollection = ticketRef.collection('files');
+
         for (final file in _selectedFiles) {
           final fileName = file.path.split('/').last;
           final storageRef =
               _storage.ref().child('tickets/${ticketRef.id}/files/$fileName');
 
+          // Upload file to storage
           await storageRef.putFile(file);
-          final downloadUrl = await storageRef.getDownloadURL();
-          fileUrls.add(downloadUrl);
-        }
+          final downloadUrl =
+              await storageRef.getDownloadURL(); // Corrected line
 
-        await ticketRef.update({'files': fileUrls});
+          SynchronizedTime.initialize();
+          await filesCollection.add({
+            'url': downloadUrl,
+            'isThereMsgNotRead': false,
+            'fileName': fileName,
+            'uploadedAt': SynchronizedTime.now(),
+            'userId': user.uid,
+          });
+        }
       }
 
       navigator.pop();
