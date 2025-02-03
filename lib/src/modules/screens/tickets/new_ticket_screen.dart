@@ -51,25 +51,20 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
           child: Form(
             key: _formKey,
             child: Column(
+              spacing: 20,
               children: [
                 FormFieldOutline(
                   controller: _titleController,
                   prefixIcon: Icons.title,
                   hintText: 'Title',
                 ),
-                const SizedBox(height: 20),
-
-                // Description Field
                 FormFieldOutline(
                   controller: _descriptionController,
                   maxLines: 3,
                   prefixIcon: Icons.description,
                   hintText: 'Description',
                 ),
-                const SizedBox(height: 20),
-
                 _buildFileUploadSection(),
-                const SizedBox(height: 20),
                 SubmitButton(
                   onPressed: _isUploading ? null : _submitTicket,
                   buttonText: _isUploading ? 'Uploading...' : 'Submit',
