@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+
+import '../../../service/synchronized_time.dart';
 import '../../../widgets/form_field_outline.dart';
 import '../../../widgets/submit_button.dart';
 
@@ -177,7 +179,6 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                 )
                 .toList(),
           );
-          // _selectedFiles = result.paths.map((path) => File(path!)).toList();
         });
       }
     } catch (e) {
@@ -254,105 +255,3 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     _descriptionController.dispose();
   }
 }
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/material.dart';
-// import '../../widgets/form_field_outline.dart';
-// import '../../widgets/submit_button.dart';
-//
-// class NewTicketScreen extends StatefulWidget {
-//   const NewTicketScreen({super.key});
-//
-//   @override
-//   State<NewTicketScreen> createState() => _NewTicketScreenState();
-// }
-//
-// class _NewTicketScreenState extends State<NewTicketScreen> {
-//   late final GlobalKey<FormState> _formKey;
-//   late final TextEditingController _titleController;
-//   late final TextEditingController _descriptionController;
-//   late final FirebaseFirestore _firestore;
-//   late final FirebaseAuth _auth;
-//
-//   // String _status = 'Open';
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     init();
-//   }
-//
-//   @override
-//   void dispose() {
-//     finish();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('New Ticket')),
-//       body: SingleChildScrollView(
-//         child: Padding(
-//           padding: EdgeInsets.all(16),
-//           child: Form(
-//             key: _formKey,
-//             child: Column(
-//               spacing: 20,
-//               children: [
-//                 FormFieldOutline(
-//                   controller: _titleController,
-//                   prefixIcon: Icons.title,
-//                   hintText: 'Title',
-//                 ),
-//                 FormFieldOutline(
-//                   controller: _descriptionController,
-//                   maxLines: 3,
-//                   prefixIcon: Icons.description,
-//                   hintText: 'Description',
-//                 ),
-//                 SubmitButton(
-//                   onPressed: _submitTicket,
-//                   buttonText: 'Submit',
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Future<void> _submitTicket() async {
-//     final navigator = Navigator.of(context);
-//     if (_formKey.currentState!.validate()) {
-//       final user = _auth.currentUser;
-//       if (user == null) return;
-//
-//       await _firestore.collection('tickets').add({
-//         'userId': user.uid,
-//         'title': _titleController.text,
-//         'description': _descriptionController.text,
-//         // 'status': _status,
-//         'createdDate': Timestamp.now(),
-//       });
-//
-//       navigator.pop();
-//     }
-//   }
-//
-//   void init() {
-//     _formKey = GlobalKey<FormState>();
-//     _titleController = TextEditingController();
-//     _descriptionController = TextEditingController();
-//
-//     _firestore = FirebaseFirestore.instance;
-//     _auth = FirebaseAuth.instance;
-//   }
-//
-//   void finish(){
-//     _titleController.dispose();
-//     _descriptionController.dispose();
-//   }
-// }
