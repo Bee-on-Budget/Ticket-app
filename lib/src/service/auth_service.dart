@@ -8,6 +8,17 @@ class AuthService {
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   AuthStatus _status = AuthStatus.unknown;
 
+  Future<void> getFiles({
+    required String ticketId,
+    required String fileId,
+  }) async {
+    final files = _fireStore
+        .collection('tickets')
+        .doc(ticketId)
+        .collection('files')
+        .doc(fileId);
+  }
+
   Future<AuthStatus> login({
     required String email,
     required String password,
@@ -15,7 +26,7 @@ class AuthService {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _status = AuthStatus.successful;
-    } on  FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       _status = AuthExceptionHandler.handleAuthException(e);
     }
     return _status;
@@ -25,7 +36,8 @@ class AuthService {
     await _auth
         .sendPasswordResetEmail(email: email)
         .then((value) => _status = AuthStatus.successful)
-        .catchError((e) => _status = AuthExceptionHandler.handleAuthException(e));
+        .catchError(
+            (e) => _status = AuthExceptionHandler.handleAuthException(e));
     return _status;
   }
 
