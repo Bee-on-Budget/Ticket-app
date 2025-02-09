@@ -2,8 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../forget_password_screen.dart';
-import '../../../utils/ui/login_form.dart';
+
+import '../../../../utils/ui/login_form.dart';
+import '../rest/forget_password_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen(
@@ -50,36 +51,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 LoginForm(setLoading),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(35, 0, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Forget your password?",
-                        style: GoogleFonts.poppins(
-                          fontSize: 15,
-                          color: Color(0XFF8D8D8D),
-                        ),
-                      ),
-                      TextButton(
-                        child: Text(
-                          "Reset",
-                          style: GoogleFonts.poppins(
-                            fontSize: 15,
-                            color: Color(0XFF44564A),
-                          ),
-                        ),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ForgetPasswordScreen(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
