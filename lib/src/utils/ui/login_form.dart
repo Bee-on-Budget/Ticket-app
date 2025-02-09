@@ -165,13 +165,129 @@ class _LoginFormState extends State<LoginForm> {
                   buttonText: 'Submit',
                 ),
               ),
-              const SizedBox(
-                height: 12,
+              Padding(
+                padding: const EdgeInsets.only(left: 35),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Forget your password?",
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        color: Color(0XFF8D8D8D),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: _resetPassword,
+                      child: Text(
+                        "Reset",
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          color: Color(0XFF44564A),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _login() async {
+    widget.setLoading(true);
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _errorMessage = null;
+      });
+      _formKey.currentState!.save();
+      final AuthStatus status = await _authService.loginViaEmail(
+        email: _email,
+        password: _password,
+      );
+      if (status == AuthStatus.successful) {
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/home');
+        }
+      } else {
+        widget.setLoading(false);
+        setState(() {
+          _errorMessage = AuthExceptionHandler.generateErrorMessage(status);
+        });
+      }
+    }
+    widget.setLoading(false);
+  }
+
+  String? _emailValidator(String? email) {
+    if (email == null || email.isEmpty) {
+      return "Field can't be empty";
+    }
+    if (!EmailValidator.validate(email, true)) {
+      return "Enter a valid email";
+    }
+    return null;
+  }
+
+  Future<void> _resetPassword() async {
+    final String email = _emailController.text.trim();
+    if (email.isEmpty) {
+      setState(() {
+        _errorMessage = "Enter your email address";
+      });
+      return;
+    }
+    if (!EmailValidator.validate(email, true)) {
+      setState(() {
+        _errorMessage = "Enter a valid email";
+      });
+      return;
+    }
+    setState(() {
+      _errorMessage = null;
+    });
+    final AuthStatus status = await _authService.resetPassword(email: email);
+    if (status == AuthStatus.successful) {
+      _emailController.clear();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Reset message has been sent, please check your email.",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            duration: const Duration(seconds: 10),
+            showCloseIcon: true,
+          ),
+        );
+      }
+    } else {
+      if (mounted) {
+        final String error = AuthExceptionHandler.generateErrorMessage(status);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            duration: const Duration(seconds: 10),
+            showCloseIcon: true,
+          ),
+        );
+      }
+    }
+  }
+
+  void _changeObscure() {
+    setState(() {
+      _isObscure = !_isObscure;
+    });
   }
 }
