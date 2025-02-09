@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ticket_app/src/config/themes/theme_config.dart';
-import 'modules/screens/auth_page.dart';
+
+import 'config/themes/theme_config.dart';
+import 'modules/screens/auth/login/login_page.dart';
+import 'modules/screens/auth/auth_page.dart';
 import 'modules/screens/home/home_page.dart';
-import 'modules/screens/login/login_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
