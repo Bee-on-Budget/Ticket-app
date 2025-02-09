@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import './login_screen.dart';
+import 'login_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
