@@ -1,8 +1,9 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ticket_app/src/service/auth_exception_handler.dart';
-import 'package:ticket_app/src/service/auth_service.dart';
 
+import '../../service/auth_exception_handler.dart';
+import '../../service/auth_service.dart';
 import '../../widgets/form_field_outline.dart';
 import '../../widgets/submit_button.dart';
 
@@ -17,61 +18,26 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
 
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
   final _authService = AuthService();
-  late String _email;
-  late String _password;
+  String _email = '';
+  String _password = '';
 
-  String _errorMessage = "";
+  bool _isObscure = true;
 
-  Future<void> _login() async {
-    setState(() {
-      _errorMessage = "";
-    });
-    widget.setLoading(true);
-    if (_formKey.currentState!.validate()) {
-      await Future.delayed(Duration(seconds: 1));
-      _formKey.currentState!.save();
+  String? _errorMessage;
 
-      final status = await _authService.login(
-        email: _email,
-        password: _password,
-      );
-      if (status == AuthStatus.successful) {
-        if (mounted) {
-          // Navigator.of(context).pushNamedAndRemoveUntil(newRouteName, predicate);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/home',
-            ModalRoute.withName('/'),
-          );
-        }
-      } else {
-        widget.setLoading(false);
-        final String error = AuthExceptionHandler.generateErrorMessage(status);
-        setState(() {
-          _errorMessage = error;
-        });
-      }
-    }
-    widget.setLoading(false);
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _emailFocus.dispose();
+    _passwordFocus.dispose();
+    _formKey.currentState?.dispose();
+    super.dispose();
   }
-
-  // void _validateEmail(String val) {
-  //   if (val.isEmpty) {
-  //     setState(() {
-  //       _errorMessage = "Email cannot be empty";
-  //     });
-  //   } else if (!EmailValidator.validate(val, true)) {
-  //     setState(() {
-  //       _errorMessage = "Invalid email address";
-  //     });
-  //   } else {
-  //     setState(() {
-  //       _errorMessage = "";
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -84,37 +50,6 @@ class _LoginFormState extends State<LoginForm> {
             spacing: 10,
             children: [
               FormFieldOutline(
-                onSave: (email) {
-                  _email = email!.trim();
-                },
-                hintText: "Enter your email",
-                prefixIcon: Icons.mail_outline,
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  8,
-                  0,
-                  0,
-                  0,
-                ),
-                child: Text(
-                  _errorMessage,
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "Password",
-                textAlign: TextAlign.start,
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  color: Color(0XFF8D8D8D),
-                ),
-              ),
-              const SizedBox(height: 10),
                 label: "Email",
                 child: TextFormField(
                   forceErrorText: _errorMessage,
