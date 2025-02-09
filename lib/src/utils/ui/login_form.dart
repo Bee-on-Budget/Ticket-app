@@ -81,16 +81,8 @@ class _LoginFormState extends State<LoginForm> {
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
             children: [
-              Text(
-                "Email",
-                textAlign: TextAlign.start,
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  color: Color(0xFF8D8D8D),
-                ),
-              ),
-              const SizedBox(height: 10),
               FormFieldOutline(
                 onSave: (email) {
                   _email = email!.trim();
@@ -123,15 +115,49 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
               const SizedBox(height: 10),
-              FormFieldOutline(
-                onSave: (password) {
-                  _password = password!;
-                },
-                hintText: "**************",
-                obscureText: true,
-                prefixIcon: Icons.lock_outline,
+                label: "Email",
+                child: TextFormField(
+                  forceErrorText: _errorMessage,
+                  focusNode: _emailFocus,
+                  onFieldSubmitted: (_) => _passwordFocus.nextFocus(),
+                  onSaved: (email) {
+                    _email = email ?? '';
+                  },
+                  controller: _emailController,
+                  validator: _emailValidator,
+                  decoration: InputDecoration(
+                    hintText: "Email",
+                    prefixIcon: Icon(Icons.mail_outline),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
               ),
-              const SizedBox(height: 20),
+              FormFieldOutline(
+                label: "Password",
+                child: TextFormField(
+                  onSaved: (password) {
+                    _password = password ?? '';
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Field can't be empty";
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: "**************",
+                    prefixIcon: Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      onPressed: _changeObscure,
+                      icon: Icon(
+                        _isObscure ? Icons.visibility_off : Icons.visibility,
+                      ),
+                    ),
+                  ),
+                  obscureText: _isObscure,
+                ),
+              ),
+              const SizedBox(height: 10),
               Align(
                 alignment: Alignment.center,
                 child: SubmitButton(
