@@ -8,9 +8,9 @@ import '../rest/forget_password_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen(
-    this.setLoading, {
-    super.key,
-  });
+      this.setLoading, {
+        super.key,
+      });
 
   final void Function(bool) setLoading;
 
@@ -39,7 +39,7 @@ class LoginScreen extends StatelessWidget {
                 topRight: Radius.circular(40),
               ),
             ),
-            child: Column(
+            child: Column( // this where you should make the swipe
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
