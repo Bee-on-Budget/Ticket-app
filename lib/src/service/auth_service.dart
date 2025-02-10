@@ -19,7 +19,7 @@ class AuthService {
         .doc(fileId);
   }
 
-  Future<AuthStatus> login({
+  Future<AuthStatus> loginViaEmail({
     required String email,
     required String password,
   }) async {
