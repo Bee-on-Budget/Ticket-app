@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class FormFieldOutline extends StatelessWidget {
   const FormFieldOutline({
@@ -19,8 +18,7 @@ class FormFieldOutline extends StatelessWidget {
       children: [
         Text(
           label,
-          textAlign: TextAlign.start,
-          style: GoogleFonts.poppins(
+          style: TextStyle(
             fontSize: 18,
             color: Color(0xFF8D8D8D),
           ),
