@@ -19,8 +19,6 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  final FocusNode _emailFocus = FocusNode();
-  final FocusNode _passwordFocus = FocusNode();
 
   final _authService = AuthService();
   String _email = '';
@@ -33,8 +31,6 @@ class _LoginFormState extends State<LoginForm> {
   @override
   void dispose() {
     _emailController.dispose();
-    _emailFocus.dispose();
-    _passwordFocus.dispose();
     _formKey.currentState?.dispose();
     super.dispose();
   }
@@ -53,11 +49,7 @@ class _LoginFormState extends State<LoginForm> {
                 label: "Email",
                 child: TextFormField(
                   forceErrorText: _errorMessage,
-                  focusNode: _emailFocus,
-                  onFieldSubmitted: (_) => _passwordFocus.nextFocus(),
-                  onSaved: (email) {
-                    _email = email ?? '';
-                  },
+                  onSaved: (email) => _email = email!,
                   controller: _emailController,
                   validator: _emailValidator,
                   decoration: InputDecoration(
@@ -65,13 +57,15 @@ class _LoginFormState extends State<LoginForm> {
                     prefixIcon: Icon(Icons.mail_outline),
                   ),
                   keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                 ),
               ),
               FormFieldOutline(
                 label: "Password",
                 child: TextFormField(
-                  onSaved: (password) {
-                    _password = password ?? '';
+                  onSaved: (password) => _password = password!,
+                  onFieldSubmitted: (string) {
+                    _login();
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -92,8 +86,8 @@ class _LoginFormState extends State<LoginForm> {
                   obscureText: _isObscure,
                 ),
               ),
-              const SizedBox(height: 10),
-              Align(
+              Container(
+                padding: EdgeInsets.only(top: 10),
                 alignment: Alignment.center,
                 child: SubmitButton(
                   onPressed: _login,
@@ -134,10 +128,10 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<void> _login() async {
     widget.setLoading(true);
+    setState(() {
+      _errorMessage = null;
+    });
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _errorMessage = null;
-      });
       _formKey.currentState!.save();
       final AuthStatus status = await _authService.loginViaEmail(
         email: _email,
