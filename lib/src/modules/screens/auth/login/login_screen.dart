@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../utils/ui/login_form.dart';
-import '../rest/forget_password_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen(
