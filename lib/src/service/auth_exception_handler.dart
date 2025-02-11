@@ -12,7 +12,7 @@ class AuthExceptionHandler {
     switch (e.code) {
       case 'invalid-email':
         return AuthStatus.invalidEmail;
-      case 'wrong-password':
+      case 'invalid-credential':
         return AuthStatus.wrongPassword;
       default:
         return AuthStatus.unknown;
@@ -22,7 +22,7 @@ class AuthExceptionHandler {
   static String generateErrorMessage(AuthStatus error) {
     switch (error) {
       case AuthStatus.wrongPassword:
-        return "email or password is wrong.";
+        return "Email or password is wrong.";
       case AuthStatus.invalidEmail:
         return "Your email address appears to be malformed.";
       default:
