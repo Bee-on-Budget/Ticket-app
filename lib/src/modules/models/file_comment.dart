@@ -1,33 +1,33 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:ticket_app/src/service/synchronized_time.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-part './models_generator/file_comment.g.dart';
+import '../../service/synchronized_time.dart';
 
-@JsonSerializable()
 class FileComment {
   FileComment({
     required this.message,
-    required this.timeStamp,
-    required this.isRead,
     required this.senderId,
+    required this.createdAt,
   });
 
   final String message;
-  final DateTime timeStamp;
   final String senderId;
-  final bool isRead;
+  final DateTime createdAt;
 
-  factory FileComment.fromJson(Map<String, dynamic> json) =>
-      _$FileCommentFromJson(json);
+  factory FileComment.fromJson(Map<String, dynamic> json) {
+    SynchronizedTime.initialize();
+    return FileComment(
+      message: json['message'] ?? "",
+      senderId: json["senderId"] ?? "Unknown Sender",
+      createdAt:
+      (json["timestamp"] as Timestamp?)?.toDate() ?? SynchronizedTime.now(),
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$FileCommentToJson(this);
-
-  @override
-  String toString() {
-    return 'FileComment{'
-        '\n\tmessage: $message,'
-        '\n\tisRead: $isRead,'
-        '\n\ttimeStamp: $timeStamp,'
-        '\n\tsenderId: $senderId}';
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'senderId': senderId,
+      'createdTime': createdAt.toIso8601String(),
+    };
   }
 }

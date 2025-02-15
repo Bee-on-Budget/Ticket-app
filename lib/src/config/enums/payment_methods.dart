@@ -21,8 +21,7 @@ enum PaymentMethods {
 
   @override
   String toString() {
-    final String method = toString().split('.').last;
-    return "${method[0].toUpperCase()}${method.substring(1)}";
+    return "${name[0].toUpperCase()}${name.substring(1)}";
   }
 
 }

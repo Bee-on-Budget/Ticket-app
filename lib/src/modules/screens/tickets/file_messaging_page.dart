@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:ticket_app/src/service/synchronized_time.dart';
+import '../../../service/synchronized_time.dart';
+import '../../models/ticket_file.dart';
 
 class FileMessagingPage extends StatefulWidget {
   final String ticketId;
-  final Map<String, dynamic> file;
+
+  final TicketFile file;
 
   const FileMessagingPage({
     super.key,
@@ -44,7 +46,7 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
           children: [
             const Text('File Discussion', style: TextStyle(fontSize: 18)),
             Text(
-              widget.file['fileName'] ?? 'Attachment',
+              widget.file.fileName,
               style: const TextStyle(fontSize: 14),
             ),
           ],
@@ -58,7 +60,7 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
                   .collection('tickets')
                   .doc(widget.ticketId)
                   .collection('files')
-                  .doc(widget.file['fileId'])
+                  .doc(widget.file.fileId)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -206,7 +208,7 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
           .collection('tickets')
           .doc(widget.ticketId)
           .collection('files')
-          .doc(widget.file['fileId']);
+          .doc(widget.file.fileId);
 
       // Get existing comments
       final fileDoc = await fileRef.get();

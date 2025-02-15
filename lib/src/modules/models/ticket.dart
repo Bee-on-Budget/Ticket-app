@@ -1,36 +1,64 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ticket_app/src/service/synchronized_time.dart';
 
-import 'attached_file.dart';
-
-enum TicketStatus {
-  open,
-  inProgress,
-  closed,
-  unknown,
-}
+import 'ticket_file.dart';
+import '../../config/enums/ticket_status.dart';
 
 class Ticket {
-  Ticket(DocumentSnapshot ticketData) {
-    Map<String, dynamic> data = ticketData.data() as Map<String, dynamic>;
-    ticketId = ticketData.id;
-    ticketName = data['ticket-title'] ?? '';
-    description = data['description'] ?? '';
-    status = data['status'] ?? '';
+  const Ticket({
+    required this.ticketId,
+    required this.title,
+    required this.description,
+    required this.status,
+    required this.publisher,
+    required this.createdDate,
+    this.files = const [],
+  });
+
+  final String ticketId;
+  final String title;
+  final String description;
+  final TicketStatus status;
+  final String publisher;
+  final DateTime createdDate;
+  final List<TicketFile> files;
+
+  Ticket copyWith({List<TicketFile>? files}) => Ticket(
+        ticketId: ticketId,
+        title: title,
+        description: description,
+        status: status,
+        publisher: publisher,
+        createdDate: createdDate,
+        files: files ?? this.files,
+      );
+
+  factory Ticket.fromJson({
+    required Map<String, dynamic> json,
+    required String ticketId,
+    List<TicketFile> files = const [],
+    String? publisher,
+  }) {
+    SynchronizedTime.initialize();
+    return Ticket(
+      ticketId: ticketId,
+      title: json['title'] ?? "No Title",
+      description: json['description'] ?? "No Description",
+      status: TicketStatus.fromString(json['status'] ?? "Unknown"),
+      publisher: publisher ?? "Unknown Publisher",
+      createdDate: (json['createdDate'] as Timestamp?)?.toDate() ?? SynchronizedTime.now(),
+      files: files,
+    );
   }
 
-  late final String ticketId;
-  late final String ticketName;
-  late final String description;
-  late final TicketStatus status;
-  late final List<AttachedFile> files;
-  late final DateTime createdTime;
-
-  // Ticket fromJson(DocumentSnapshot ticketData) {
-  //   Map<String, dynamic> data;
-  //   return Ticket(
-  //       ticketName: data['ticket-title'] ?? '',
-  //       createdTime: (data['createdDate'] as Timestamp).toDate(),
-  //       files: List.,
-  //       description: data['description']);
-  // }
+  Map<String, dynamic> toJson() {
+    return {
+      'ticketId': ticketId,
+      'title': title,
+      'description': description,
+      'status': status.toString(),
+      'publisher': publisher,
+      'createdDate': createdDate.toIso8601String(),
+    };
+  }
 }

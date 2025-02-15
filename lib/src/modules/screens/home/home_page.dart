@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../tickets/new_ticket_screen.dart';
+import '../../models/ticket.dart';
+import '../../../service/data_service.dart';
 import '../../../service/auth_service.dart';
 import '../../../widgets/ticket_card.dart';
 
@@ -11,7 +12,6 @@ class HomePage extends StatelessWidget {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final AuthService _authService = AuthService();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +54,8 @@ class HomePage extends StatelessWidget {
       return Center(child: Text('User not logged in!'));
     }
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('tickets')
-          .where('userId', isEqualTo: currentUser.uid)
-          .orderBy('createdDate', descending: true)
-          .snapshots(),
+    return StreamBuilder<List<Ticket>>(
+      stream: DataService.getUserTickets(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
@@ -69,14 +65,14 @@ class HomePage extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.data!.docs.isEmpty) {
+        if (snapshot.data!.isEmpty) {
           return Center(child: Text('No tickets found.'));
         }
 
         return ListView.builder(
-          itemCount: snapshot.data!.docs.length,
+          itemCount: snapshot.data!.length,
           itemBuilder: (context, index) {
-            var ticket = snapshot.data!.docs[index];
+            var ticket = snapshot.data![index];
             return TicketCard(ticket: ticket);
           },
         );
