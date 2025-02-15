@@ -25,6 +25,7 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
 
+  bool _enableSending = false;
   bool _isSending = false;
 
   @override
@@ -42,8 +43,10 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('File Discussion', style: TextStyle(fontSize: 18)),
-            Text(widget.file['fileName'] ?? 'Attachment',
-                style: const TextStyle(fontSize: 14)),
+            Text(
+              widget.file['fileName'] ?? 'Attachment',
+              style: const TextStyle(fontSize: 14),
+            ),
           ],
         ),
       ),
@@ -164,11 +167,25 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
               ),
               maxLines: 3,
               minLines: 1,
+              onChanged: (value) {
+                if (value.trim().isEmpty) {
+                  setState(() {
+                    _enableSending = false;
+                  });
+                } else if (!_enableSending) {
+                  setState(() {
+                    _enableSending = true;
+                  });
+                }
+              },
+              enabled: !_isSending,
             ),
           ),
           IconButton(
             icon: const Icon(Icons.send),
-            onPressed: _isSending ? null : _sendMessage,
+            color: Theme.of(context).colorScheme.primary,
+            tooltip: 'Send a message',
+            onPressed: _isSending || !_enableSending ? null : _sendMessage,
           ),
         ],
       ),
@@ -193,9 +210,10 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
 
       // Get existing comments
       final fileDoc = await fileRef.get();
-      final existingComments = List<Map<String, dynamic>>.from(
-        fileDoc['comments'] ?? [],
-      );
+      final existingComments =
+          fileDoc.exists && fileDoc.data()!.containsKey("comments")
+              ? List<Map<String, dynamic>>.from(fileDoc["comments"])
+              : [];
 
       SynchronizedTime.initialize();
       existingComments.add({
@@ -204,9 +222,9 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
         'timestamp': SynchronizedTime.now(),
       });
 
-      await fileRef.update({
+      await fileRef.set({
         'comments': existingComments,
-      });
+      }, SetOptions(merge: true));
 
       _messageController.clear();
     } catch (e) {

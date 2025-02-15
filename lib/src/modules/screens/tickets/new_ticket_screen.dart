@@ -46,15 +46,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('New Ticket'),
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .primaryContainer,
       ),
-      backgroundColor: Theme
-          .of(context)
-          .colorScheme
-          .surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -106,12 +98,11 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                 DropdownButtonFormField<PaymentMethods>(
                   items: PaymentMethods.values
                       .map<DropdownMenuItem<PaymentMethods>>(
-                        (element) =>
-                        DropdownMenuItem(
+                        (element) => DropdownMenuItem(
                           value: element,
-                          child: Text(element.capitalize),
+                          child: Text(element.toString()),
                         ),
-                  )
+                      )
                       .toList(),
                   onChanged: (paymentMethod) {
                     setState(() {
@@ -119,7 +110,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                     });
                   },
                   validator: (PaymentMethods? paymentMethod) {
-                    if(paymentMethod == null) {
+                    if (paymentMethod == null) {
                       return "You need to select a payment method";
                     }
                     return null;
@@ -147,7 +138,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         Row(
           spacing: 10,
           children: [
-            ElevatedButton.icon(
+            OutlinedButton.icon(
               icon: const Icon(Icons.attach_file),
               label: const Text('Attach Files'),
               onPressed: _isUploading ? null : _pickFiles,
@@ -156,15 +147,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
               '${_selectedFiles.length}/$_maxFiles files',
               style: TextStyle(
                 color: _selectedFiles.length >= _maxFiles
-                    ? Theme
-                    .of(context)
-                    .colorScheme
-                    .error
-                    : Theme
-                    .of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.color,
+                    ? Theme.of(context).colorScheme.error
+                    : Theme.of(context).textTheme.bodySmall?.color,
               ),
             ),
           ],
@@ -176,23 +160,22 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
               const Text('Attached Files:'),
               const SizedBox(height: 8),
               ..._selectedFiles.map(
-                    (file) =>
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.insert_drive_file, size: 20),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(file.name),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close, size: 18),
-                            onPressed: () => _removeFile(file),
-                          ),
-                        ],
+                (file) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.insert_drive_file, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(file.name),
                       ),
-                    ),
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 18),
+                        onPressed: () => _removeFile(file),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -207,10 +190,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
           content: Text(
             message,
             style: TextStyle(
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .onPrimaryContainer,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
         ),
@@ -242,7 +222,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         if (overSizedFiles.isNotEmpty) {
           _showErrorSnackBar(
             "${overSizedFiles.length} file(s) exceed "
-                "${_maxFileSizeBytes ~/ 1024 ~/ 1024}MB limits",
+            "${_maxFileSizeBytes ~/ 1024 ~/ 1024}MB limits",
           );
           return;
         }
@@ -289,11 +269,9 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
       SynchronizedTime.initialize();
       final ticketRef = await _firestore.collection('tickets').add({
         'userId': user.uid,
-        // 'title': _titleController.text,
-        // 'description': _descriptionController.text,
         'title': _title,
         'description': _description,
-        'paymentMethod': _paymentMethod!.capitalize,
+        'paymentMethod': _paymentMethod!.toString(),
         'createdDate': SynchronizedTime.now(),
         'status': 'Open',
       });
@@ -304,8 +282,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         for (final file in _selectedFiles) {
           final fileName = file.name;
           final storageRef = _storage.ref().child(
-            'tickets/${ticketRef.id}/files/$fileName',
-          );
+                'tickets/${ticketRef.id}/files/$fileName',
+              );
 
           if (file is WebFile) {
             await storageRef.putData(file.bytes);

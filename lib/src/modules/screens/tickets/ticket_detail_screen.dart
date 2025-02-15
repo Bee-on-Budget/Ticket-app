@@ -13,7 +13,7 @@ class TicketDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final createdDate = (ticket['createdDate'] as Timestamp).toDate();
+    final createdDate = (ticket['createdDate'] as Timestamp?)?.toDate();
 
     return Scaffold(
       appBar: AppBar(title: Text(ticket['title'])),
@@ -25,15 +25,21 @@ class TicketDetailScreen extends StatelessWidget {
             _buildDetailItem('Status:', ticket['status']),
             _buildDetailItem(
               'Created:',
-              DateFormat.yMMMd().add_Hms().format(createdDate),
+              createdDate != null
+                  ? DateFormat.yMMMd().add_Hms().format(createdDate)
+                  : "Unknown Date",
             ),
             const SizedBox(height: 16),
-            const Text('Description:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Description:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             Text(ticket['description'] ?? 'No description'),
             const SizedBox(height: 16),
-            const Text('Attachments:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Attachments:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             Expanded(
               child: _buildFileList(),
             ),
@@ -90,9 +96,15 @@ class TicketDetailScreen extends StatelessWidget {
                     placeholder: (context, url) =>
                         const CircularProgressIndicator(),
                     errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+                        const Icon(Icons.error_outline),
                   )
-                : const Icon(Icons.picture_as_pdf, size: 40),
+                : const SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Icon(
+                      Icons.picture_as_pdf_outlined,
+                    ),
+                  ),
             title: Text(fileName),
             trailing: isThereMsgNotRead
                 ? Icon(

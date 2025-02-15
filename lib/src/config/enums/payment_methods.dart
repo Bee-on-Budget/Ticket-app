@@ -2,14 +2,7 @@ enum PaymentMethods {
   payPal,
   applePay,
   transfer,
-  cash,
-}
-
-extension PaymentMethodExtension on PaymentMethods {
-  String get capitalize {
-    final String method = toString().split('.').last;
-    return "${method[0].toUpperCase()}${method.substring(1)}";
-  }
+  cash;
 
   static PaymentMethods? fromString(String value) {
     switch (value) {
@@ -25,4 +18,11 @@ extension PaymentMethodExtension on PaymentMethods {
         return null;
     }
   }
+
+  @override
+  String toString() {
+    final String method = toString().split('.').last;
+    return "${method[0].toUpperCase()}${method.substring(1)}";
+  }
+
 }

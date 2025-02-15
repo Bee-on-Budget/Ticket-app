@@ -53,7 +53,7 @@ class _LoginFormState extends State<LoginForm> {
                   controller: _emailController,
                   validator: _emailValidator,
                   decoration: InputDecoration(
-                    hintText: "Email",
+                    hintText: "your-email@example.com",
                     prefixIcon: Icon(Icons.mail_outline),
                   ),
                   keyboardType: TextInputType.emailAddress,

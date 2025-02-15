@@ -32,6 +32,19 @@ class AuthService {
     return _status;
   }
 
+  // Future<AuthStatus> loginViaPhone({
+  //   required String mobile,
+  //   required String password,
+  // }) async {
+  //   await _auth.verifyPhoneNumber(
+  //     phoneNumber: mobile,
+  //       verificationCompleted: (PhoneAuthCredential credential) async {},
+  //       verificationFailed: verificationFailed,
+  //       codeSent: codeSent,
+  //       codeAutoRetrievalTimeout: codeAutoRetrievalTimeout)
+  //   return AuthStatus.unknown;
+  // }
+
   Future<AuthStatus> resetPassword({required String email}) async {
     await _auth
         .sendPasswordResetEmail(email: email)

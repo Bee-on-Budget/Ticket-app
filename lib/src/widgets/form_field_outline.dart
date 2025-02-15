@@ -18,10 +18,7 @@ class FormFieldOutline extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 18,
-            color: Color(0xFF8D8D8D),
-          ),
+          style: Theme.of(context).textTheme.labelLarge,
         ),
         child
       ],
