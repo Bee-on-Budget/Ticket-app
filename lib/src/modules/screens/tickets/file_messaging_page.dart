@@ -167,6 +167,9 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
                 hintText: 'Type your message...',
                 border: InputBorder.none,
               ),
+              autocorrect: true,
+              autofocus: true,
+
               maxLines: 3,
               minLines: 1,
               onChanged: (value) {

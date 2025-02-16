@@ -23,7 +23,8 @@ class Ticket {
   final DateTime createdDate;
   final List<TicketFile> files;
 
-  Ticket copyWith({List<TicketFile>? files}) => Ticket(
+  Ticket copyWith({
+    List<TicketFile>? files}) => Ticket(
         ticketId: ticketId,
         title: title,
         description: description,

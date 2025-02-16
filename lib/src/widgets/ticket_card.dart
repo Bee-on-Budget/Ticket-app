@@ -1,72 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ticket_app/src/service/data_service.dart';
 
 import '../modules/models/ticket.dart';
 import '../modules/screens/tickets/ticket_detail_screen.dart';
 
 class TicketCard extends StatelessWidget {
-  const TicketCard({super.key, required this.ticket});
+  const TicketCard({
+    super.key,
+    required this.ticket,
+  });
 
   final Ticket ticket;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ListTile(
-        title: Text(
-          ticket.title,
-          maxLines: 2,
-        ),
-        subtitle: Text(DateFormat.yMMMd().format(ticket.createdDate)),
-        leading: SizedBox(
-          width: 66,
-          child: Row(
-            spacing: 5,
-            children: [
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    width: 3,
-                    color: ticket.status.getColor(),
-                  ),
-                ),
-              ),
-              Text(
-                ticket.status.toString(),
-                style: TextStyle(
+        title: Text(ticket.title),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          decoration: BoxDecoration(
+            color: ticket.status.getColor().withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            ticket.status.toString(),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: ticket.status.getColor(),
+                  fontWeight: FontWeight.bold,
                 ),
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            spacing: 10,
+            children: [
+              Text("${ticket.description.substring(0, 20)}..."),
+              Row(
+                spacing: 8,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.calendar_today,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
+                  Text(
+                    DateFormat('MMM dd, yyyy').format(ticket.createdDate),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
         onTap: () {
-          Navigator.push(
-            context,
+          Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) =>
-                  StreamBuilder<Ticket>(
-                    stream: DataService.getTicketWithFiles(ticket),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                            child: Text('Error loading files: ${snapshot
-                                .error}'));
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      final newTicket = snapshot.data;
-                      return TicketDetailScreen(ticket: newTicket!);
-                    },
-                  ),
+              builder: (context) => TicketDetailScreen(ticketNoFile: ticket),
             ),
           );
         },

@@ -87,7 +87,12 @@ final ThemeData themeConfig = ThemeData(
     ),
   ),
 
-  // Font and Text Theme
+  listTileTheme: ListTileThemeData(
+      titleTextStyle: TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 1,
+  )),
   fontFamily: _poppinsFont.fontFamily,
   textTheme: TextTheme(
     bodyLarge: _poppinsFont.copyWith(
@@ -102,6 +107,11 @@ final ThemeData themeConfig = ThemeData(
       fontSize: 24,
       fontWeight: FontWeight.bold,
       color: const Color(0xFF3D4B3F), // Dark green text
+    ),
+    titleMedium: _poppinsFont.copyWith(
+      fontSize: 22,
+      fontWeight: FontWeight.bold,
+      color: const Color(0xFF3D4B3F), // Dark green Text
     ),
   ),
 
