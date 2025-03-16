@@ -1,5 +1,5 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../service/auth_exception_handler.dart';
@@ -24,6 +24,7 @@ class _LoginFormState extends State<LoginForm> {
   String _email = '';
   String _password = '';
 
+  bool _isPhone = false;
   bool _isObscure = true;
 
   String? _errorMessage;
@@ -49,7 +50,12 @@ class _LoginFormState extends State<LoginForm> {
                 label: "Email",
                 child: TextFormField(
                   forceErrorText: _errorMessage,
-                  onSaved: (email) => _email = email!,
+                  onSaved: (email) {
+                    _email = email!.trim();
+                    if (_isPhone) {
+                      _email = "$_email@phone.com";
+                    }
+                  },
                   controller: _emailController,
                   validator: _emailValidator,
                   decoration: InputDecoration(
@@ -156,8 +162,11 @@ class _LoginFormState extends State<LoginForm> {
       return "Field can't be empty";
     }
     if (!EmailValidator.validate(email, true)) {
-      return "Enter a valid email";
+      _isPhone = true;
+      return null;
+      // return "Enter a valid email";
     }
+    _isPhone = false;
     return null;
   }
 
@@ -187,7 +196,10 @@ class _LoginFormState extends State<LoginForm> {
             content: Text(
               "Reset message has been sent, please check your email.",
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                color: Theme
+                    .of(context)
+                    .colorScheme
+                    .onPrimaryContainer,
               ),
             ),
             duration: const Duration(seconds: 10),
@@ -203,7 +215,10 @@ class _LoginFormState extends State<LoginForm> {
             content: Text(
               error,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                color: Theme
+                    .of(context)
+                    .colorScheme
+                    .onPrimaryContainer,
               ),
             ),
             duration: const Duration(seconds: 10),

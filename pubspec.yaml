@@ -50,6 +50,7 @@ dependencies:
   ntp: ^2.0.0
   json_annotation: ^4.9.0
   phone_numbers_parser: ^9.0.3
+  flutter_launcher_icons: ^0.14.3
   # sign_in_with_apple: ^3.0.0 # For Apple Sign-In
   
 dev_dependencies:

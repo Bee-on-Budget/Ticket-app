@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -19,18 +21,6 @@ class DataService {
       return TicketUser.fromJson(snapshot.docs.first.data());
     });
   }
-
-  // static Stream<List<Ticket>> getAllTickets() {
-  //   return _firestore.collection('tickets').snapshots().map((snapshot) {
-  //     return snapshot.docs.map((doc) {
-  //       return Ticket.fromJson(
-  //         json: doc.data(),
-  //         ticketId: doc.id,
-  //         publisher: null,
-  //       );
-  //     }).toList();
-  //   });
-  // }
 
   static Stream<List<Ticket>> getUserTickets() {
     final userId = _auth.currentUser!.uid;
@@ -66,4 +56,36 @@ class DataService {
       return ticket.copyWith(files: files);
     });
   }
+
+  static Future<List<String>> getTicketInfo() {
+    final userId = _auth.currentUser!.uid;
+    return _firestore.collection('users').doc(userId).get().then((doc){
+      final data = doc.data() as Map<String, dynamic>;
+      return List<String>.from(jsonDecode(data['paymentMethods'] ?? ''));
+    });
+    // return _firestore.collection('users').doc(userId).snapshots().;
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
