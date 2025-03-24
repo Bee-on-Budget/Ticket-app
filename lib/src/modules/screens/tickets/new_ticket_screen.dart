@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../config/enums/payment_methods.dart';
-import '../../../service/synchronized_time.dart';
+import '../../../service/data_service.dart';
 import '../../../widgets/form_field_outline.dart';
 import '../../../widgets/submit_button.dart';
 import '../../models/app_file.dart';
@@ -25,7 +24,6 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   String _description = "";
   String _title = "";
   PaymentMethods? _paymentMethod;
-  late final FirebaseFirestore _firestore;
   late final FirebaseAuth _auth;
   late final FirebaseStorage _storage;
   static const _maxFiles = 10;
@@ -266,44 +264,14 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     setState(() => _isUploading = true);
     try {
       _formKey.currentState!.save();
-      SynchronizedTime.initialize();
-      final ticketRef = await _firestore.collection('tickets').add({
-        'userId': user.uid,
-        'title': _title,
-        'description': _description,
-        'paymentMethod': _paymentMethod!.toString(),
-        'createdDate': SynchronizedTime.now(),
-        'status': 'Open',
-      });
-
-      if (_selectedFiles.isNotEmpty) {
-        final filesCollection = ticketRef.collection('files');
-
-        for (final file in _selectedFiles) {
-          final fileName = file.name;
-          final storageRef = _storage.ref().child(
-                'tickets/${ticketRef.id}/files/$fileName',
-              );
-
-          if (file is WebFile) {
-            await storageRef.putData(file.bytes);
-          } else if (file is LocalFile) {
-            await storageRef.putFile(file.file);
-          }
-
-          final downloadUrl = await storageRef.getDownloadURL();
-
-          SynchronizedTime.initialize();
-          await filesCollection.add({
-            'url': downloadUrl,
-            'isThereMsgNotRead': false,
-            'fileName': fileName,
-            'uploadedAt': SynchronizedTime.now(),
-            'userId': user.uid,
-          });
-        }
-      }
-
+      await DataService.postATicket(
+        uid: user.uid,
+        title: _title,
+        description: _description,
+        paymentMethod: _paymentMethod!,
+        selectedFiles: _selectedFiles,
+        storage: _storage,
+      );
       if (mounted) {
         Navigator.of(context).pop();
       }
@@ -316,7 +284,6 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
 
   void init() {
     _formKey = GlobalKey<FormState>();
-    _firestore = FirebaseFirestore.instance;
     _auth = FirebaseAuth.instance;
     _storage = FirebaseStorage.instance;
   }

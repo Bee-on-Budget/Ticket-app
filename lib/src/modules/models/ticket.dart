@@ -9,6 +9,7 @@ class Ticket {
     required this.ticketId,
     required this.title,
     required this.description,
+    required this.refId,
     required this.status,
     required this.publisher,
     required this.createdDate,
@@ -18,19 +19,30 @@ class Ticket {
   final String ticketId;
   final String title;
   final String description;
+  final String refId;
   final TicketStatus status;
   final String publisher;
   final DateTime createdDate;
   final List<TicketFile> files;
 
   Ticket copyWith({
-    List<TicketFile>? files}) => Ticket(
-        ticketId: ticketId,
-        title: title,
-        description: description,
-        status: status,
-        publisher: publisher,
-        createdDate: createdDate,
+    String? ticketId,
+    String? title,
+    String? description,
+    String? refId,
+    TicketStatus? status,
+    String? publisher,
+    DateTime? createdDate,
+    List<TicketFile>? files,
+  }) =>
+      Ticket(
+        ticketId: ticketId ?? this.ticketId,
+        title: title ?? this.title,
+        description: description ?? this.description,
+        refId: refId ?? this.refId,
+        status: status ?? this.status,
+        publisher: publisher ?? this.publisher,
+        createdDate: createdDate ?? this.createdDate,
         files: files ?? this.files,
       );
 
@@ -45,9 +57,11 @@ class Ticket {
       ticketId: ticketId,
       title: json['title'] ?? "No Title",
       description: json['description'] ?? "No Description",
+      refId: json['ref_id'] ?? 'No Reference Id',
       status: TicketStatus.fromString(json['status'] ?? "Unknown"),
       publisher: publisher ?? "Unknown Publisher",
-      createdDate: (json['createdDate'] as Timestamp?)?.toDate() ?? SynchronizedTime.now(),
+      createdDate: (json['createdDate'] as Timestamp?)?.toDate() ??
+          SynchronizedTime.now(),
       files: files,
     );
   }
@@ -57,6 +71,7 @@ class Ticket {
       'ticketId': ticketId,
       'title': title,
       'description': description,
+      'ref_id': refId,
       'status': status.toString(),
       'publisher': publisher,
       'createdDate': createdDate.toIso8601String(),

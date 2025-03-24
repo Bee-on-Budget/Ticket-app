@@ -4,6 +4,7 @@ class TicketFile {
   const TicketFile({
     required this.fileId,
     required this.fileName,
+    required this.refId,
     required this.uploadedAt,
     required this.url,
     this.isThereMsgNotRead = false,
@@ -11,6 +12,7 @@ class TicketFile {
 
   final String fileId;
   final String fileName;
+  final String refId;
   final DateTime? uploadedAt;
   final String url;
   final bool isThereMsgNotRead;
@@ -21,9 +23,10 @@ class TicketFile {
   }) {
     return TicketFile(
       fileId: fileId,
-      fileName: json['fileName'] ?? "No Filename",
+      fileName: json['fileName'] ?? 'No Filename',
+      refId: json['ref_id'] ?? 'No Reference Id',
       uploadedAt: (json['uploadedAt'] as Timestamp?)?.toDate(),
-      url: json['url'] ?? "Missing url",
+      url: json['url'] ?? 'Missing url',
     );
   }
 
@@ -31,6 +34,7 @@ class TicketFile {
     return {
       'fileName': fileName,
       'uploadedAt': uploadedAt?.toIso8601String(),
+      'ref_id': refId,
       'url': url,
     };
   }

@@ -87,9 +87,12 @@ class TicketDetailScreen extends StatelessWidget {
                       // Status
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
-                          color: ticket.status.getColor().withValues(alpha: 0.1),
+                          color:
+                              ticket.status.getColor().withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -103,20 +106,6 @@ class TicketDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // _buildDetailItem('Status:', ticket.status.toString()),
-                  // _buildDetailItem(
-                  //   "Created: ",
-                  //   DateFormat.yMMMd().add_Hms().format(ticket.createdDate),
-                  // ),
-                  // const SizedBox(height: 16),
-                  // const Text(
-                  //   'Description:',
-                  //   style: TextStyle(
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  // Text(ticket.description),
-                  // const SizedBox(height: 16),
                   const Text(
                     'Attachments:',
                     style: TextStyle(fontWeight: FontWeight.bold),
@@ -130,25 +119,7 @@ class TicketDetailScreen extends StatelessWidget {
           }),
     );
   }
-
-  // Widget _buildDetailItem(String label, String value) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 4),
-  //     child: RichText(
-  //       text: TextSpan(
-  //         style: const TextStyle(color: Colors.black, fontSize: 16),
-  //         children: [
-  //           TextSpan(
-  //             text: '$label ',
-  //             style: const TextStyle(fontWeight: FontWeight.bold),
-  //           ),
-  //           TextSpan(text: value),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
+  
   Widget _buildFileList(Ticket ticket) {
     final List<TicketFile> files = ticket.files;
     if (files.isEmpty) {
@@ -185,6 +156,7 @@ class TicketDetailScreen extends StatelessWidget {
                     ),
                   ),
             title: Text(fileName),
+            subtitle: Text('Attache Id: ${file.refId}'),
             trailing: file.isThereMsgNotRead
                 ? Icon(
                     Icons.notification_important_outlined,

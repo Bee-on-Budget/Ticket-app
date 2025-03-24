@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
+import '../config/enums/payment_methods.dart';
+import '../modules/models/app_file.dart';
 import '../modules/models/ticket.dart';
 import '../modules/models/ticket_file.dart';
 import '../modules/models/ticket_user.dart';
@@ -59,33 +62,77 @@ class DataService {
 
   static Future<List<String>> getTicketInfo() {
     final userId = _auth.currentUser!.uid;
-    return _firestore.collection('users').doc(userId).get().then((doc){
+    return _firestore.collection('users').doc(userId).get().then((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return List<String>.from(jsonDecode(data['paymentMethods'] ?? ''));
     });
-    // return _firestore.collection('users').doc(userId).snapshots().;
+  }
+
+  static Future<void> postATicket({
+    required String uid,
+    required String title,
+    required String description,
+    required PaymentMethods paymentMethod,
+    required List<AppFile> selectedFiles,
+    required FirebaseStorage storage,
+  }) async {
+    final String ticketRefId = await generateUniqueId();
+    final ticketRef = await _firestore.collection('tickets').add({
+      'userId': uid,
+      'title': title,
+      'description': description,
+      'ref_id': ticketRefId,
+      'paymentMethod': paymentMethod.toString(),
+      'createdDate': Timestamp.now(),
+      'status': 'Open',
+    });
+    if (selectedFiles.isNotEmpty) {
+      final filesCollection = ticketRef.collection('files');
+
+      for (final file in selectedFiles) {
+        final fileName = file.name;
+        final storageRef = storage.ref().child(
+              'tickets/${ticketRef.id}/files/$fileName',
+            );
+
+        if (file is WebFile) {
+          await storageRef.putData(file.bytes);
+        } else if (file is LocalFile) {
+          await storageRef.putFile(file.file);
+        }
+
+        final downloadUrl = await storageRef.getDownloadURL();
+        final String fileRefId = await generateUniqueId();
+        await filesCollection.add({
+          'url': downloadUrl,
+          'isThereMsgNotRead': false,
+          'ref_id': fileRefId,
+          'fileName': fileName,
+          'uploadedAt': Timestamp.now(),
+          'userId': uid,
+        });
+      }
+    }
+  }
+
+  static Future<String> generateUniqueId() async {
+    final counterRef = _firestore.collection('data').doc('preferences');
+
+    try {
+      final newId =
+          await _firestore.runTransaction<String>((transaction) async {
+        final doc = await transaction.get(counterRef);
+        final String currentCount =
+            ((int.tryParse(doc.data()?['idx_counter']) ?? 0) + 1)
+                .toString()
+                .padLeft(10, '0');
+        transaction.update(counterRef, {'idx_counter': currentCount});
+        return currentCount;
+      });
+
+      return newId;
+    } catch (e) {
+      return generateUniqueId(); // Retry
+    }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
