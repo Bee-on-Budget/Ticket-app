@@ -135,4 +135,13 @@ class DataService {
       return generateUniqueId(); // Retry
     }
   }
+
+  static Future<List<String>> getTitles() async {
+    return _firestore.collection('data').doc('preferences').get().then((doc) {
+      if(!doc.exists) return [];
+      final data = doc.data() as Map<String, dynamic>;
+      final titles = data['titles'] as List<dynamic>?;
+      return titles?.cast<String>() ?? [];
+    });
+  }
 }
