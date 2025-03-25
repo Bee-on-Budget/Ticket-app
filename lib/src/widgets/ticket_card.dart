@@ -44,7 +44,7 @@ class TicketCard extends StatelessWidget {
             spacing: 10,
             children: [
               Text('Ticket Id: ${ticket.refId}'),
-              Text("${ticket.description.substring(0, 20)}..."),
+              Text(ticket.description,maxLines: 1,),
               Row(
                 spacing: 8,
                 mainAxisSize: MainAxisSize.min,

@@ -52,7 +52,7 @@ class Ticket {
     List<TicketFile> files = const [],
     String? publisher,
   }) {
-    SynchronizedTime.initialize();
+    // SynchronizedTime.initialize();
     return Ticket(
       ticketId: ticketId,
       title: json['title'] ?? "No Title",
@@ -61,7 +61,7 @@ class Ticket {
       status: TicketStatus.fromString(json['status'] ?? "Unknown"),
       publisher: publisher ?? "Unknown Publisher",
       createdDate: (json['createdDate'] as Timestamp?)?.toDate() ??
-          SynchronizedTime.now(),
+          Timestamp.now().toDate(),
       files: files,
     );
   }

@@ -220,11 +220,11 @@ class _FileMessagingPageState extends State<FileMessagingPage> {
               ? List<Map<String, dynamic>>.from(fileDoc["comments"])
               : [];
 
-      SynchronizedTime.initialize();
+      // SynchronizedTime.initialize();
       existingComments.add({
         'message': message,
         'senderId': user.uid,
-        'timestamp': SynchronizedTime.now(),
+        'timestamp': Timestamp.now().toDate(),
       });
 
       await fileRef.set({

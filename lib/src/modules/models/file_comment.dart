@@ -14,12 +14,12 @@ class FileComment {
   final DateTime createdAt;
 
   factory FileComment.fromJson(Map<String, dynamic> json) {
-    SynchronizedTime.initialize();
+    // SynchronizedTime.initialize();
     return FileComment(
       message: json['message'] ?? "",
       senderId: json["senderId"] ?? "Unknown Sender",
-      createdAt:
-      (json["timestamp"] as Timestamp?)?.toDate() ?? SynchronizedTime.now(),
+      createdAt: (json["timestamp"] as Timestamp?)?.toDate() ??
+          Timestamp.now().toDate(),
     );
   }
 

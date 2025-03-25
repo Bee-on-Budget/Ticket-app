@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../../config/enums/payment_methods.dart';
+// import '../../../config/enums/payment_methods.dart';
 import '../../../service/data_service.dart';
 import '../../../widgets/form_field_outline.dart';
 import '../../../widgets/submit_button.dart';
@@ -23,7 +23,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   late final GlobalKey<FormState> _formKey;
   String _description = "";
   String? _title;
-  PaymentMethods? _paymentMethod;
+  // PaymentMethods? _paymentMethod;
+  String? _paymentMethod;
   late final FirebaseAuth _auth;
   late final FirebaseStorage _storage;
   static const _maxFiles = 10;
@@ -83,7 +84,10 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                             .map(
                               (title) => DropdownMenuItem<String>(
                                 value: title,
-                                child: Text(title),
+                                child: Text(
+                                  title,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
                               ),
                             )
                             .toList(),
@@ -104,34 +108,79 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   child: TextFormField(
                     maxLines: 6,
                     onSaved: (value) {
-                      _description = value?.trim() ?? 'No Description';
+                      if(value == null || value.trim().isEmpty) {
+                        _description = 'No Description';
+                        return;
+                      }
+                      _description = value.trim();
                     },
                   ),
                 ),
-                FormFieldOutline(
-                  label: 'Payment Method',
-                  isRequired: true,
-                  child: DropdownButtonFormField<PaymentMethods>(
-                    items: PaymentMethods.values
-                        .map<DropdownMenuItem<PaymentMethods>>(
-                          (element) => DropdownMenuItem(
-                            value: element,
-                            child: Text(element.toString()),
+                FutureBuilder<List<String>>(
+                  future: DataService.getUserPaymentMethods(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _showErrorSnackBar('Error while loading the Payment Methods');
+                      });
+                    }
+                    final List<String> paymentMethods = [];
+                    if (snapshot.hasData) {
+                      paymentMethods.addAll(snapshot.data!);
+                    }
+                    return FormFieldOutline(
+                      label: 'Payment Method',
+                      isRequired: true,
+                      child: DropdownButtonFormField<String>(
+                        items: paymentMethods
+                            .map<DropdownMenuItem<String>>(
+                              (paymentMethod) => DropdownMenuItem(
+                            value: paymentMethod,
+                            child: Text(
+                              paymentMethod,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
                           ),
                         )
-                        .toList(),
-                    onChanged: (paymentMethod) {
-                      setState(() {
-                        _paymentMethod = paymentMethod;
-                      });
-                    },
-                    validator: (PaymentMethods? paymentMethod) {
-                      if (paymentMethod == null) {
-                        return "You need to select a payment method";
-                      }
-                      return null;
-                    },
-                  ),
+                            .toList(),
+                        onChanged: (paymentMethod) {
+                          setState(() {
+                            _paymentMethod = paymentMethod;
+                          });
+                        },
+                        validator: (String? paymentMethod) {
+                          if (paymentMethod == null) {
+                            return "You need to select a payment method";
+                          }
+                          return null;
+                        },
+                      ),
+                      // child: DropdownButtonFormField<PaymentMethods>(
+                      //   items: PaymentMethods.values
+                      //       .map<DropdownMenuItem<PaymentMethods>>(
+                      //         (element) => DropdownMenuItem(
+                      //           value: element,
+                      //           child: Text(
+                      //             element.toString(),
+                      //             style: Theme.of(context).textTheme.bodyLarge,
+                      //           ),
+                      //         ),
+                      //       )
+                      //       .toList(),
+                      //   onChanged: (paymentMethod) {
+                      //     setState(() {
+                      //       _paymentMethod = paymentMethod;
+                      //     });
+                      //   },
+                      //   validator: (PaymentMethods? paymentMethod) {
+                      //     if (paymentMethod == null) {
+                      //       return "You need to select a payment method";
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
+                    );
+                  }
                 ),
                 _buildFileUploadSection(),
                 const SizedBox(height: 10),

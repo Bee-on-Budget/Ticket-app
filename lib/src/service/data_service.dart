@@ -72,7 +72,7 @@ class DataService {
     required String uid,
     required String title,
     required String description,
-    required PaymentMethods paymentMethod,
+    required String paymentMethod,
     required List<AppFile> selectedFiles,
     required FirebaseStorage storage,
   }) async {
@@ -82,7 +82,7 @@ class DataService {
       'title': title,
       'description': description,
       'ref_id': ticketRefId,
-      'paymentMethod': paymentMethod.toString(),
+      'paymentMethod': paymentMethod,
       'createdDate': Timestamp.now(),
       'status': 'Open',
     });
@@ -144,4 +144,19 @@ class DataService {
       return titles?.cast<String>() ?? [];
     });
   }
+
+  static Future<List<String>> getUserPaymentMethods() {
+    final userId = _auth.currentUser!.uid;
+    return _firestore
+        .collection('users')
+        .doc(userId)
+    .get().then((doc){
+      if(!doc.exists) return [];
+      final data = doc.data() as Map<String, dynamic>;
+      final paymentMethods = data['paymentMethods'] as List<dynamic>?;
+      return paymentMethods?.cast<String>() ?? [];
+
+    });
+  }
+
 }
