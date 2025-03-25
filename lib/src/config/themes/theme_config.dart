@@ -96,8 +96,9 @@ final ThemeData themeConfig = ThemeData(
   fontFamily: _poppinsFont.fontFamily,
   textTheme: TextTheme(
     bodyLarge: _poppinsFont.copyWith(
-      fontSize: 15,
-      color: const Color(0xFF4F4F4F), // Dark gray text
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: const Color(0xFF3D4B3F),// Dark gray text
     ),
     labelLarge: _poppinsFont.copyWith(
       fontSize: 18,
@@ -112,6 +113,10 @@ final ThemeData themeConfig = ThemeData(
       fontSize: 22,
       fontWeight: FontWeight.bold,
       color: const Color(0xFF3D4B3F), // Dark green Text
+    ),
+    bodyMedium: _poppinsFont.copyWith(
+      fontSize: 15,
+      color: const Color(0xFF4F4F4F),
     ),
   ),
 
