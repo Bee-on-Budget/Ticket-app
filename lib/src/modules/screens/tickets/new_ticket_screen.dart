@@ -54,8 +54,15 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 20,
               children: [
-                const Text(
-                  "Title",
+                Text.rich(
+                  TextSpan(text: 'Title', children: [
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ]),
                   style: TextStyle(
                     fontSize: 18,
                     color: Color(0xFF8D8D8D),
@@ -70,7 +77,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                       });
                     }
                     final List<String> titles = [];
-                    if(snapshot.hasData) {
+                    if (snapshot.hasData) {
                       titles.addAll(snapshot.data!);
                     }
                     return DropdownButtonFormField<String>(
@@ -91,12 +98,12 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                             ),
                           )
                           .toList(),
-                      onChanged: (title){
+                      onChanged: (title) {
                         setState(() {
                           _title = title!;
                         });
                       },
-                      onSaved: (title){
+                      onSaved: (title) {
                         _title = title;
                       },
                     );
@@ -111,8 +118,15 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                     },
                   ),
                 ),
-                const Text(
-                  "Payment Method",
+                Text.rich(
+                  TextSpan(text: 'Payment Method', children: [
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ]),
                   style: TextStyle(
                     fontSize: 18,
                     color: Color(0xFF8D8D8D),
