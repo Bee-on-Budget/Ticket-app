@@ -6,7 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// import '../../../config/enums/payment_methods.dart';
 import '../../../service/data_service.dart';
 import '../../../widgets/form_field_outline.dart';
 import '../../../widgets/submit_button.dart';
@@ -23,7 +22,6 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   late final GlobalKey<FormState> _formKey;
   String _description = "";
   String? _title;
-  // PaymentMethods? _paymentMethod;
   String? _paymentMethod;
   late final FirebaseAuth _auth;
   late final FirebaseStorage _storage;
@@ -155,30 +153,6 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                           return null;
                         },
                       ),
-                      // child: DropdownButtonFormField<PaymentMethods>(
-                      //   items: PaymentMethods.values
-                      //       .map<DropdownMenuItem<PaymentMethods>>(
-                      //         (element) => DropdownMenuItem(
-                      //           value: element,
-                      //           child: Text(
-                      //             element.toString(),
-                      //             style: Theme.of(context).textTheme.bodyLarge,
-                      //           ),
-                      //         ),
-                      //       )
-                      //       .toList(),
-                      //   onChanged: (paymentMethod) {
-                      //     setState(() {
-                      //       _paymentMethod = paymentMethod;
-                      //     });
-                      //   },
-                      //   validator: (PaymentMethods? paymentMethod) {
-                      //     if (paymentMethod == null) {
-                      //       return "You need to select a payment method";
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
                     );
                   }
                 ),

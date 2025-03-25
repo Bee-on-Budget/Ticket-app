@@ -14,11 +14,11 @@ class AuthPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator.adaptive(),
           );
         }
         if (snapshot.hasData) {
-          return HomePage();
+          return const HomePage();
         } else {
           return const LoginPage();
         }

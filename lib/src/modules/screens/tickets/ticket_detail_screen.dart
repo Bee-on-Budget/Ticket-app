@@ -173,7 +173,7 @@ class TicketDetailScreen extends StatelessWidget {
                 'isThereMsgNotRead': false,
               });
               if (context.mounted) {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => FileMessagingPage(

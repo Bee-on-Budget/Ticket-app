@@ -19,7 +19,6 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.logout,
-              // color: const Color(0xFF3D4B3F),
             ),
             onPressed: () async {
               await AuthService().logout();
@@ -28,7 +27,6 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      // body: _buildTicketsList(),
       body: AuthService().isCurrentUser()
           ? Center(child: Text('User not logged in!'))
           : StreamBuilder<List<Ticket>>(
@@ -59,7 +57,9 @@ class HomePage extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => NewTicketScreen()),
+            MaterialPageRoute(
+              builder: (context) => const NewTicketScreen(),
+            ),
           );
         },
         child: Icon(
