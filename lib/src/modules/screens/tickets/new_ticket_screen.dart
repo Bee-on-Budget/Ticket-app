@@ -106,17 +106,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   label: "Description",
                   child: TextFormField(
                     maxLines: 6,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Field can't be empty";
-                      }
-                      if (value.length < 20) {
-                        return "Description can't be less than 20";
-                      }
-                      return null;
-                    },
                     onSaved: (value) {
-                      _description = value!;
+                      _description = value?.trim() ?? 'No Description';
                     },
                   ),
                 ),
