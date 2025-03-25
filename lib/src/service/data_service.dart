@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import '../config/enums/payment_methods.dart';
 import '../modules/models/app_file.dart';
 import '../modules/models/ticket.dart';
 import '../modules/models/ticket_file.dart';

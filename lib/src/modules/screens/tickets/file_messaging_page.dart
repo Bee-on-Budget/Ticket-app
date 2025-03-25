@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../service/synchronized_time.dart';
 import '../../models/ticket_file.dart';
 
 class FileMessagingPage extends StatefulWidget {

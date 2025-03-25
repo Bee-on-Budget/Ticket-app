@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../service/synchronized_time.dart';
-
 class FileComment {
   FileComment({
     required this.message,

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ticket_app/src/service/synchronized_time.dart';
 
 import 'ticket_file.dart';
 import '../../config/enums/ticket_status.dart';
