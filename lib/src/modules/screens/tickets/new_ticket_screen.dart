@@ -66,8 +66,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        // _showErrorSnackBar('Error while loading the titles');
-                        _showErrorSnackBar(snapshot.error.toString());
+                        _showErrorSnackBar('Error while loading the titles');
                       });
                     }
                     final List<String> titles = [];
