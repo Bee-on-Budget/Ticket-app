@@ -5,19 +5,29 @@ class FormFieldOutline extends StatelessWidget {
     super.key,
     required this.label,
     required this.child,
+    this.isRequired = false,
   });
 
   final String label;
   final Widget child;
+  final bool isRequired;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 10,
+      spacing: 5,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
+        Text.rich(
+          TextSpan(text: label, children: [
+            if (isRequired)
+              TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+          ]),
           style: Theme.of(context).textTheme.labelLarge,
         ),
         child

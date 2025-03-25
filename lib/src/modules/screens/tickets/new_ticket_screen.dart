@@ -52,22 +52,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 20,
+              spacing: 15,
               children: [
-                Text.rich(
-                  TextSpan(text: 'Title', children: [
-                    TextSpan(
-                      text: ' *',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  ]),
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Color(0xFF8D8D8D),
-                  ),
-                ),
                 FutureBuilder(
                   future: DataService.getTitles(),
                   builder: (context, snapshot) {
@@ -80,32 +66,36 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                     if (snapshot.hasData) {
                       titles.addAll(snapshot.data!);
                     }
-                    return DropdownButtonFormField<String>(
-                      value: _title,
-                      decoration: InputDecoration(),
-                      isExpanded: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "You need to select a title";
-                        }
-                        return null;
-                      },
-                      items: titles
-                          .map(
-                            (title) => DropdownMenuItem<String>(
-                              value: title,
-                              child: Text(title),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (title) {
-                        setState(() {
-                          _title = title!;
-                        });
-                      },
-                      onSaved: (title) {
-                        _title = title;
-                      },
+                    return FormFieldOutline(
+                      label: 'Title',
+                      isRequired: true,
+                      child: DropdownButtonFormField<String>(
+                        value: _title,
+                        decoration: InputDecoration(),
+                        isExpanded: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "You need to select a title";
+                          }
+                          return null;
+                        },
+                        items: titles
+                            .map(
+                              (title) => DropdownMenuItem<String>(
+                                value: title,
+                                child: Text(title),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (title) {
+                          setState(() {
+                            _title = title!;
+                          });
+                        },
+                        onSaved: (title) {
+                          _title = title;
+                        },
+                      ),
                     );
                   },
                 ),
@@ -118,40 +108,30 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                     },
                   ),
                 ),
-                Text.rich(
-                  TextSpan(text: 'Payment Method', children: [
-                    TextSpan(
-                      text: ' *',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  ]),
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Color(0xFF8D8D8D),
+                FormFieldOutline(
+                  label: 'Payment Method',
+                  isRequired: true,
+                  child: DropdownButtonFormField<PaymentMethods>(
+                    items: PaymentMethods.values
+                        .map<DropdownMenuItem<PaymentMethods>>(
+                          (element) => DropdownMenuItem(
+                            value: element,
+                            child: Text(element.toString()),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (paymentMethod) {
+                      setState(() {
+                        _paymentMethod = paymentMethod;
+                      });
+                    },
+                    validator: (PaymentMethods? paymentMethod) {
+                      if (paymentMethod == null) {
+                        return "You need to select a payment method";
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                DropdownButtonFormField<PaymentMethods>(
-                  items: PaymentMethods.values
-                      .map<DropdownMenuItem<PaymentMethods>>(
-                        (element) => DropdownMenuItem(
-                          value: element,
-                          child: Text(element.toString()),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (paymentMethod) {
-                    setState(() {
-                      _paymentMethod = paymentMethod;
-                    });
-                  },
-                  validator: (PaymentMethods? paymentMethod) {
-                    if (paymentMethod == null) {
-                      return "You need to select a payment method";
-                    }
-                    return null;
-                  },
                 ),
                 _buildFileUploadSection(),
                 const SizedBox(height: 10),
