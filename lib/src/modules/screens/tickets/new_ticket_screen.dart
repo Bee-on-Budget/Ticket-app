@@ -22,7 +22,7 @@ class NewTicketScreen extends StatefulWidget {
 class _NewTicketScreenState extends State<NewTicketScreen> {
   late final GlobalKey<FormState> _formKey;
   String _description = "";
-  String _title = "";
+  String? _title;
   PaymentMethods? _paymentMethod;
   late final FirebaseAuth _auth;
   late final FirebaseStorage _storage;
@@ -54,19 +54,54 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 20,
               children: [
-                FormFieldOutline(
-                  label: "Title",
-                  child: TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Title can't be empty";
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _title = value!;
-                    },
+                const Text(
+                  "Title",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Color(0xFF8D8D8D),
                   ),
+                ),
+                FutureBuilder(
+                  future: DataService.getTitles(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        // _showErrorSnackBar('Error while loading the titles');
+                        _showErrorSnackBar(snapshot.error.toString());
+                      });
+                    }
+                    final List<String> titles = [];
+                    if(snapshot.hasData) {
+                      titles.addAll(snapshot.data!);
+                    }
+                    return DropdownButtonFormField<String>(
+                      value: _title,
+                      decoration: InputDecoration(),
+                      isExpanded: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "You need to select a title";
+                        }
+                        return null;
+                      },
+                      items: titles
+                          .map(
+                            (title) => DropdownMenuItem<String>(
+                              value: title,
+                              child: Text(title),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (title){
+                        setState(() {
+                          _title = title!;
+                        });
+                      },
+                      onSaved: (title){
+                        _title = title;
+                      },
+                    );
+                  },
                 ),
                 FormFieldOutline(
                   label: "Description",
@@ -266,7 +301,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
       _formKey.currentState!.save();
       await DataService.postATicket(
         uid: user.uid,
-        title: _title,
+        title: _title!,
         description: _description,
         paymentMethod: _paymentMethod!,
         selectedFiles: _selectedFiles,
