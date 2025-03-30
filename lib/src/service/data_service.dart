@@ -147,13 +147,13 @@ class DataService {
 
       return newId;
     } catch (e) {
-      return generateUniqueId(); // Retry
+      return generateUniqueId();
     }
   }
 
   static Future<List<String>> getTitles() async {
     return _firestore.collection('data').doc('preferences').get().then((doc) {
-      if(!doc.exists) return [];
+      if (!doc.exists) return [];
       final data = doc.data() as Map<String, dynamic>;
       final titles = data['titles'] as List<dynamic>?;
       return titles?.cast<String>() ?? [];
@@ -162,16 +162,25 @@ class DataService {
 
   static Future<List<String>> getUserPaymentMethods() {
     final userId = _auth.currentUser!.uid;
-    return _firestore
-        .collection('users')
-        .doc(userId)
-    .get().then((doc){
-      if(!doc.exists) return [];
+    return _firestore.collection('users').doc(userId).get().then((doc) {
+      if (!doc.exists) return [];
       final data = doc.data() as Map<String, dynamic>;
       final paymentMethods = data['paymentMethods'] as List<dynamic>?;
       return paymentMethods?.cast<String>() ?? [];
-
     });
   }
 
+  static Future<void> changeFileUnreadMessage(
+    String ticketId,
+    String fileId,
+  ) async {
+    await FirebaseFirestore.instance
+        .collection('tickets')
+        .doc(ticketId)
+        .collection('files')
+        .doc(fileId)
+        .update(
+      {'isThereMsgNotRead': false},
+    );
+  }
 }
