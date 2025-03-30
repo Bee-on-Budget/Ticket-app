@@ -145,7 +145,11 @@ class _LoginFormState extends State<LoginForm> {
       );
       if (status == AuthStatus.successful) {
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+          );
         }
       } else {
         widget.setLoading(false);
