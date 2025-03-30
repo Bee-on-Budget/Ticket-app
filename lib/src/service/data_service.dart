@@ -12,6 +12,7 @@ import '../modules/models/ticket_user.dart';
 class DataService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   static Stream<TicketUser> getCurrentUser() {
     final userId = _auth.currentUser!.uid;
@@ -123,6 +124,10 @@ class DataService {
         });
       }
     }
+  }
+
+  static Future<String> getFileUrl(String url) async {
+    return _firebaseStorage.refFromURL(url).getDownloadURL();
   }
 
   static Future<String> generateUniqueId() async {
