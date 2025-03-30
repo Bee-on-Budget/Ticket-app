@@ -51,6 +51,9 @@ dependencies:
   json_annotation: ^4.9.0
   phone_numbers_parser: ^9.0.3
   flutter_launcher_icons: ^0.14.3
+  url_launcher: ^6.3.1
+  flutter_downloader: ^1.12.0
+  path_provider: ^2.1.5
   # sign_in_with_apple: ^3.0.0 # For Apple Sign-In
   
 dev_dependencies:
