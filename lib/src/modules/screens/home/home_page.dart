@@ -22,7 +22,13 @@ class HomePage extends StatelessWidget {
             ),
             onPressed: () async {
               await AuthService().logout();
-              navigator.pushReplacementNamed('/login');
+              if (context.mounted) {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  ),
+                );
+              }
             },
           ),
         ],
