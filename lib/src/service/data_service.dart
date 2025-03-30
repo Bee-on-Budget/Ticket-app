@@ -31,13 +31,24 @@ class DataService {
         .where('userId', isEqualTo: userId)
         .orderBy('createdDate', descending: true)
         .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return Ticket.fromJson(
+        .asyncMap((snapshot) async {
+      List<Ticket> tickets = [];
+      for (var doc in snapshot.docs) {
+        var filesSnapshot = await doc.reference.collection('files').get();
+        List<TicketFile> files = filesSnapshot.docs.map((fileDoc) {
+          return TicketFile.fromJson(
+            json: fileDoc.data(),
+            fileId: fileDoc.id,
+          );
+        }).toList();
+
+        tickets.add(Ticket.fromJson(
           ticketId: doc.id,
           json: doc.data(),
-        );
-      }).toList();
+          files: files,
+        ));
+      }
+      return tickets;
     });
   }
 
