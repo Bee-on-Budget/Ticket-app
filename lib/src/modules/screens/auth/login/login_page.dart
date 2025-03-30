@@ -55,6 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                 color: Color(0x33888888),
               ),
               CircularProgressIndicator(),
+
             ]
           ],
         ),

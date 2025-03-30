@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../modules/screens/home/home_page.dart';
 import '../../service/auth_exception_handler.dart';
 import '../../service/auth_service.dart';
 import '../../widgets/form_field_outline.dart';
@@ -200,10 +201,7 @@ class _LoginFormState extends State<LoginForm> {
             content: Text(
               "Reset message has been sent, please check your email.",
               style: TextStyle(
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .onPrimaryContainer,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
             duration: const Duration(seconds: 10),
@@ -219,10 +217,7 @@ class _LoginFormState extends State<LoginForm> {
             content: Text(
               error,
               style: TextStyle(
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .onPrimaryContainer,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
             duration: const Duration(seconds: 10),
