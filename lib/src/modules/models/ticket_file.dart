@@ -7,7 +7,7 @@ class TicketFile {
     required this.refId,
     required this.uploadedAt,
     required this.url,
-    this.isThereMsgNotRead = false,
+    required this.isThereMsgNotRead,
   });
 
   final String fileId;
@@ -27,6 +27,7 @@ class TicketFile {
       refId: json['ref_id'] ?? 'No Reference Id',
       uploadedAt: (json['uploadedAt'] as Timestamp?)?.toDate(),
       url: json['url'] ?? 'Missing url',
+      isThereMsgNotRead: json['isThereMsgNotRead']
     );
   }
 
@@ -36,6 +37,7 @@ class TicketFile {
       'uploadedAt': uploadedAt?.toIso8601String(),
       'ref_id': refId,
       'url': url,
+      'isThereMsgNotRead': isThereMsgNotRead,
     };
   }
 }
