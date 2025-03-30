@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ticket_app/src/modules/screens/auth/login/login_page.dart';
 
 import '../tickets/new_ticket_screen.dart';
 import '../../models/ticket.dart';
@@ -6,12 +7,18 @@ import '../../../service/data_service.dart';
 import '../../../service/auth_service.dart';
 import '../../../widgets/ticket_card.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String searchQuery = "";
+
+  @override
   Widget build(BuildContext context) {
-    final navigator = Navigator.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('My Tickets'),
@@ -35,29 +42,60 @@ class HomePage extends StatelessWidget {
       ),
       body: AuthService().isCurrentUser()
           ? Center(child: Text('User not logged in!'))
-          : StreamBuilder<List<Ticket>>(
-              stream: DataService.getUserTickets(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search by Ref ID...',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    onChanged: (query) {
+                      setState(() {
+                        searchQuery = query;
+                      });
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: StreamBuilder<List<Ticket>>(
+                    stream: DataService.getUserTickets(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
 
-                if (snapshot.data!.isEmpty) {
-                  return Center(child: Text('No tickets found.'));
-                }
+                      var tickets = snapshot.data!;
+                      var filteredTickets = tickets.where((ticket) {
+                        return ticket.refId.contains(searchQuery) ||
+                            ticket.files.any(
+                                (file) => file.refId.contains(searchQuery));
+                      }).toList();
 
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    var ticket = snapshot.data![index];
-                    return TicketCard(ticket: ticket);
-                  },
-                );
-              },
+                      if (filteredTickets.isEmpty) {
+                        return Center(
+                            child: Text('No matching tickets found.'));
+                      }
+
+                      return ListView.builder(
+                        itemCount: filteredTickets.length,
+                        itemBuilder: (context, index) {
+                          var ticket = filteredTickets[index];
+                          return TicketCard(ticket: ticket);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
