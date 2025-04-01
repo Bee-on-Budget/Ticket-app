@@ -9,6 +9,7 @@ class Ticket {
     required this.title,
     required this.description,
     required this.refId,
+    required this.ticketReference,
     required this.status,
     required this.publisher,
     required this.createdDate,
@@ -19,6 +20,7 @@ class Ticket {
   final String title;
   final String description;
   final String refId;
+  final String ticketReference;
   final TicketStatus status;
   final String publisher;
   final DateTime createdDate;
@@ -29,6 +31,7 @@ class Ticket {
     String? title,
     String? description,
     String? refId,
+    String? ticketReference,
     TicketStatus? status,
     String? publisher,
     DateTime? createdDate,
@@ -39,6 +42,7 @@ class Ticket {
         title: title ?? this.title,
         description: description ?? this.description,
         refId: refId ?? this.refId,
+        ticketReference: ticketReference ?? this.ticketReference,
         status: status ?? this.status,
         publisher: publisher ?? this.publisher,
         createdDate: createdDate ?? this.createdDate,
@@ -57,6 +61,7 @@ class Ticket {
       title: json['title'] ?? "No Title",
       description: json['description'] ?? "No Description",
       refId: json['ref_id'] ?? 'No Reference Id',
+      ticketReference: json['reference'] ?? 'Ticket Reference Unavailable',
       status: TicketStatus.fromString(json['status'] ?? "Unknown"),
       publisher: publisher ?? "Unknown Publisher",
       createdDate: (json['createdDate'] as Timestamp?)?.toDate() ??
