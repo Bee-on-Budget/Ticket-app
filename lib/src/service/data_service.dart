@@ -53,21 +53,17 @@ class DataService {
     });
   }
 
-  static Stream<Ticket> getTicketWithFiles(Ticket ticket) {
-    List<TicketFile> files = [];
+  static Stream<List<TicketFile>> getTicketFiles(String ticketId) {
     return _firestore
         .collection('tickets')
-        .doc(ticket.ticketId)
+        .doc(ticketId)
         .collection('files')
         .orderBy('uploadedAt', descending: true)
         .snapshots()
         .map((snapshot) {
-      files.addAll(
-        snapshot.docs.map(
-          (doc) => TicketFile.fromJson(json: doc.data(), fileId: doc.id),
-        ),
-      );
-      return ticket.copyWith(files: files);
+      return snapshot.docs.map((doc) {
+        return TicketFile.fromJson(json: doc.data(), fileId: doc.id);
+      }).toList();
     });
   }
 
