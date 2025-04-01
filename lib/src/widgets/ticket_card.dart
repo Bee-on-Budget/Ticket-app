@@ -43,7 +43,7 @@ class TicketCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 10,
             children: [
-              Text('Ticket Id: ${ticket.refId}'),
+              Text('Ticket Reference: ${ticket.ticketReference}'),
               Text(ticket.description,maxLines: 1,),
               Row(
                 spacing: 8,
