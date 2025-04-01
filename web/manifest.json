@@ -1,11 +1,11 @@
 {
-    "name": "ticket_app",
-    "short_name": "ticket_app",
+    "name": "Morph Accountant",
+    "short_name": "Morph Accountant",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#hexcode",
     "theme_color": "#hexcode",
-    "description": "A new Flutter project.",
+    "description": "Tickets Management App to make it easier for users to follow up with their tickets progress.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
