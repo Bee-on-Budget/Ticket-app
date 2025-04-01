@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: 'Search by Ref ID...',
+                      hintText: 'Search by Ref ID or Ticket Reference...',
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -77,12 +77,14 @@ class _HomePageState extends State<HomePage> {
                       var filteredTickets = tickets.where((ticket) {
                         return ticket.refId.contains(searchQuery) ||
                             ticket.files.any(
-                                (file) => file.refId.contains(searchQuery));
+                                (file) => file.refId.contains(searchQuery)) ||
+                            ticket.ticketReference.contains(searchQuery);
                       }).toList();
 
                       if (filteredTickets.isEmpty) {
                         return Center(
-                            child: Text('No matching tickets found.'));
+                          child: Text('No matching tickets found.'),
+                        );
                       }
 
                       return ListView.builder(
