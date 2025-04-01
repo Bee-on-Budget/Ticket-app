@@ -56,7 +56,7 @@ class LoginScreen extends StatelessWidget {
           Positioned(
             top: -(width / 2),
             child: Image.asset(
-              'assets/images/logo-round.png',
+              'assets/images/1024-nobg-round.png',
               width: width,
             ),
           ),
