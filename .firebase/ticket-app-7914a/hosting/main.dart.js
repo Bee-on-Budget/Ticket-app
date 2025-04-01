@@ -88216,7 +88216,7 @@ return A.aA7(new A.eD(new A.ae(0,1/0,b.d,1/0),new A.MO(A.fc(A.b([new A.Dt(s),new
 $S:568}
 A.Nd.prototype={
 N(a){var s=null,r=Math.min(A.c7(a,s,t.w).w.a.a*0.3,200),q=r/2,p=t.p,o=A.hX(s,A.fc(A.b([A.bD("Log In",s,s,s,A.t_().$3$color$fontSize$fontWeight(A.b7(4283387727),40,B.aC),s,s),new A.B0(this.c,s)],p),B.aK,B.U,B.ad,0),B.w,s,s,new A.dd(B.k,s,s,B.AU,s,s,B.aq),s,s,new A.aA(20,q+2,20,20),s)
-return new A.bP(new A.aA(0,q,0,0),A.lX(B.ls,A.b([o,A.Ow(s,new A.Ao(A.aSw(s,s,new A.ym("assets/images/logo-round.png",s,s)),r,s),s,s,s,s,-q,s)],p),B.w,B.bK,s),s)}}
+return new A.bP(new A.aA(0,q,0,0),A.lX(B.ls,A.b([o,A.Ow(s,new A.Ao(A.aSw(s,s,new A.ym("assets/images/1024-nobg-round.png",s,s)),r,s),s,s,s,s,-q,s)],p),B.w,B.bK,s),s)}}
 A.pP.prototype={
 ag(){return new A.Un()}}
 A.Un.prototype={
