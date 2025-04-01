@@ -33,6 +33,7 @@ final ThemeData themeConfig = ThemeData(
       ),
     ),
   ),
+
   inputDecorationTheme: InputDecorationTheme(
     fillColor: Colors.white,
     filled: true,
@@ -88,17 +89,18 @@ final ThemeData themeConfig = ThemeData(
   ),
 
   listTileTheme: ListTileThemeData(
-      titleTextStyle: TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    letterSpacing: 1,
-  )),
+    titleTextStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1,
+    ),
+  ),
   fontFamily: _poppinsFont.fontFamily,
   textTheme: TextTheme(
     bodyLarge: _poppinsFont.copyWith(
       fontSize: 18,
       fontWeight: FontWeight.bold,
-      color: const Color(0xFF3D4B3F),// Dark gray text
+      color: const Color(0xFF3D4B3F), // Dark gray text
     ),
     labelLarge: _poppinsFont.copyWith(
       fontSize: 18,
@@ -137,63 +139,3 @@ final ThemeData themeConfig = ThemeData(
     ),
   ),
 );
-
-// final ThemeData themeConfig1 = ThemeData(
-//   colorScheme: ColorScheme.fromSeed(
-//     seedColor: const Color(0xFF3D4B3F),
-//   ),
-//   floatingActionButtonTheme: const FloatingActionButtonThemeData(
-//     backgroundColor: Color(0xFF3D4B3F),
-//   ),
-//   elevatedButtonTheme: ElevatedButtonThemeData(
-//     style: ElevatedButton.styleFrom(
-//         backgroundColor: const Color(0xff00210d),
-//         foregroundColor: const Color(0xFFFFFFFF),
-//         iconColor: const Color(0xFFFFFFFF),
-//         padding: const EdgeInsets.symmetric(horizontal: 30)),
-//   ),
-//   dropdownMenuTheme: DropdownMenuThemeData(
-//     menuStyle: MenuStyle(),
-//   ),
-//   inputDecorationTheme: InputDecorationTheme(
-//     fillColor: Colors.white,
-//     filled: true,
-//     contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-//     hintStyle: GoogleFonts.poppins(
-//       fontSize: 15,
-//       color: const Color(0xFF8D8D8D),
-//     ),
-//     disabledBorder: OutlineInputBorder(
-//       borderRadius: BorderRadius.circular(20),
-//       borderSide: const BorderSide(
-//         color: Colors.blueGrey,
-//         width: 1,
-//       ),
-//     ),
-//     border: OutlineInputBorder(
-//       borderRadius: BorderRadius.circular(20),
-//       borderSide: BorderSide(
-//         color: const Color(0xFF3D4B3F),
-//       ),
-//     ),
-//     prefixIconColor: const Color(0xFF4F4F4F),
-//   ),
-//   fontFamily: GoogleFonts.poppins.toString(),
-//   textTheme: TextTheme(
-//     bodyLarge: GoogleFonts.poppins(
-//       fontSize: 15,
-//       color: const Color(0xFF4F4F4F),
-//     ),
-//     labelLarge: GoogleFonts.poppins(
-//       fontSize: 18,
-//       color: const Color(0xFF8D8D8D),
-//     ),
-//   ),
-//   snackBarTheme: SnackBarThemeData(
-//     closeIconColor: Color(0xff00210d),
-//     backgroundColor: Color(0xffb2f1bf),
-//     contentTextStyle: TextStyle(
-//       color: Color(0xff00210d),
-//     ),
-//   ),
-// );
