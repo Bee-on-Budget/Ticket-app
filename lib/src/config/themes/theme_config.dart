@@ -110,9 +110,14 @@ final ThemeData themeConfig = ThemeData(
       color: const Color(0xFF3D4B3F), // Dark green text
     ),
     titleMedium: _poppinsFont.copyWith(
-      fontSize: 22,
+      fontSize: 18,
       fontWeight: FontWeight.bold,
-      color: const Color(0xFF3D4B3F), // Dark green Text
+      color: const Color(0xFF161B16), // Dark green Text
+    ),
+    titleSmall: _poppinsFont.copyWith(
+      fontSize: 15,
+      fontWeight: FontWeight.bold,
+      color: const Color(0xFF161B16), // Dark green Text
     ),
     bodyMedium: _poppinsFont.copyWith(
       fontSize: 15,
