@@ -10,7 +10,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Ticket App',
+      title: 'Morph Accountant',
       theme: themeConfig,
       home: const AuthPage(),
     );
