@@ -140,7 +140,7 @@ class TicketDetailScreen extends StatelessWidget {
                     ...files.map(
                       (file) => AttachmentCard(
                         file: file,
-                        ticketId: ticket.ticketId,
+                        ticket: ticket,
                       ),
                     )
                   ],
