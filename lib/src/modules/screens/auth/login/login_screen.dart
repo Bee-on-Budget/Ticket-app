@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../utils/ui/login_form.dart';
+import '../../../../widgets/logo_half_border.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen(
-      this.setLoading, {
-        super.key,
-      });
+    this.setLoading, {
+    super.key,
+  });
 
   final void Function(bool) setLoading;
 
@@ -38,7 +39,8 @@ class LoginScreen extends StatelessWidget {
                 topRight: Radius.circular(40),
               ),
             ),
-            child: Column( // this where you should make the swipe
+            child: Column(
+              // this where you should make the swipe
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -52,6 +54,10 @@ class LoginScreen extends StatelessWidget {
                 LoginForm(setLoading),
               ],
             ),
+          ),
+          Positioned(
+            top: -(width / 2) - 2,
+            child: LogoHalfBorder(width: width + 4),
           ),
           Positioned(
             top: -(width / 2),
