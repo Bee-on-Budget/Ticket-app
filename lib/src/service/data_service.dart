@@ -140,7 +140,7 @@ class DataService {
       'ref_id': ticketRefId,
       'paymentMethod': paymentMethod,
       'createdDate': Timestamp.now(),
-      'status': 'Open',
+      'status': TicketStatus.open.toString(),
     });
     if (selectedFiles.isNotEmpty) {
       final filesCollection = ticketRef.collection('files');
