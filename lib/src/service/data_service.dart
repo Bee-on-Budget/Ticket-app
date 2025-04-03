@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:ticket_app/src/config/enums/ticket_status.dart';
 
 import '../modules/models/app_file.dart';
 import '../modules/models/ticket.dart';
@@ -75,6 +77,53 @@ class DataService {
     });
   }
 
+  static Future<TicketFile> replaceOldFile({
+    required String ticketId,
+    required TicketFile oldFile,
+    required AppFile newFile,
+  }) async {
+    try {
+      // 1. Get file bytes based on platform
+      final Uint8List fileBytes;
+
+      if (newFile is LocalFile) {
+        fileBytes = await newFile.file.readAsBytes();
+      } else if (newFile is WebFile) {
+        fileBytes = newFile.bytes;
+      } else {
+        throw Exception('Unsupported file type');
+      }
+
+      // 2. Upload new file to storage (overwrite existing)
+      final storageRef = FirebaseStorage.instance.refFromURL(oldFile.url);
+      await storageRef.putData(fileBytes);
+
+      // 3. Get download URL for the new file
+      final newDownloadUrl = await storageRef.getDownloadURL();
+
+      // 4. Prepare updated file data
+      final updatedFile = TicketFile(
+        fileId: oldFile.fileId,
+        fileName: newFile.name,
+        refId: oldFile.refId,
+        uploadedAt: Timestamp.now().toDate(),
+        url: newDownloadUrl,
+        isThereMsgNotRead: oldFile.isThereMsgNotRead,
+      );
+
+      // 5. Update Firestore document
+      await FirebaseFirestore.instance
+          .collection('tickets')
+          .doc(ticketId)
+          .collection('files')
+          .doc(oldFile.fileId)
+          .update(updatedFile.toJson());
+
+      return updatedFile;
+    } catch (e) {
+      throw Exception('Failed to replace file: ${e.toString()}');
+    }
+  }
   static Future<void> postATicket({
     required String uid,
     required String title,
