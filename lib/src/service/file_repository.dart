@@ -2,27 +2,30 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 
 import '../modules/models/ticket_file.dart';
 
 Future<void> handleDownload(BuildContext context, TicketFile file) async {
   try {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Starting download... Hello Bob!!')),
+      const SnackBar(content: Text('Starting download...')),
     );
 
-    // Construct proper download URL
     final downloadUrl = _getDownloadUrl(file.url);
 
     if (kIsWeb) {
-      // Direct download for web
-      final anchor = html.AnchorElement(href: downloadUrl)
+      // Create anchor element using package:web
+      final anchor = web.HTMLAnchorElement()
+        ..href = downloadUrl
         ..download = file.fileName
         ..style.display = 'none';
       html.document.body?.children.add(anchor);
+
+      // Add to DOM and trigger click
+      web.document.body?.append(anchor);
       anchor.click();
-      html.document.body?.children.remove(anchor);
+      web.document.body?.removeChild(anchor);
     } else {
       // Mobile download handling
       final directory = await getApplicationDocumentsDirectory();
