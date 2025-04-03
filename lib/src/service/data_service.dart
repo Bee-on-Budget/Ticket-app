@@ -124,6 +124,7 @@ class DataService {
       throw Exception('Failed to replace file: ${e.toString()}');
     }
   }
+
   static Future<void> postATicket({
     required String uid,
     required String title,
@@ -227,5 +228,36 @@ class DataService {
         .update(
       {'isThereMsgNotRead': false},
     );
+  }
+
+  static Future<void> updateTicketDescription(
+    String ticketId,
+    String newDescription,
+  ) async {
+    if (ticketId.isEmpty) {
+      throw ArgumentError('Ticket ID cannot be empty');
+    }
+
+    if (newDescription.trim().isEmpty) {
+      newDescription = 'No Description';
+    }
+
+    try {
+      final docRef = _firestore.collection('tickets').doc(ticketId);
+      final docSnapshot = await docRef.get();
+
+      if (!docSnapshot.exists) {
+        throw Exception('Ticket not found');
+      }
+
+      await docRef.update({
+        'description': newDescription.trim(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on FirebaseException catch (e) {
+      throw Exception('Firebase error: ${e.message}');
+    } catch (e) {
+      throw Exception('Update failed: ${e.toString()}');
+    }
   }
 }
