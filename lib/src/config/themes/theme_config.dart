@@ -8,6 +8,11 @@ final ThemeData themeConfig = ThemeData(
     seedColor: const Color(0xFF3D4B3F), // Primary color
   ),
 
+  appBarTheme: AppBarTheme(
+    backgroundColor: const Color(0xFF3D4B3F), // Dark green
+    foregroundColor: Colors.white, // White text
+  ),
+
   // Floating Action Button Theme
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Color(0xFF3D4B3F), // Dark green
