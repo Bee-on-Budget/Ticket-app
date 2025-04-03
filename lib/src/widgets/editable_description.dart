@@ -163,6 +163,8 @@ class _EditableDescriptionState extends State<EditableDescription> {
       });
       return;
     }
+
+    _controller.text = _controller.text.trim();
     if (_validate) {
       setState(() {
         _validate = false;
