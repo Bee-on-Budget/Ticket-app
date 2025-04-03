@@ -34,7 +34,7 @@ class TicketFile {
   Map<String, dynamic> toJson() {
     return {
       'fileName': fileName,
-      'uploadedAt': uploadedAt?.toIso8601String(),
+      'uploadedAt': uploadedAt,
       'ref_id': refId,
       'url': url,
       'isThereMsgNotRead': isThereMsgNotRead,
