@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ticket_app/src/service/functions.dart';
 
 import '../config/enums/ticket_status.dart';
@@ -63,15 +64,39 @@ class _AttachmentCardState extends State<AttachmentCard> {
               ),
               subtitle: Padding(
                 padding: const EdgeInsets.only(top: 4),
-                child: Hero(
-                  tag: 'file-id-${widget.file.refId}',
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: Text(
-                      'Attachment Id: ${widget.file.refId}',
-                      style: theme.textTheme.bodySmall,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Hero(
+                      tag: 'file-id-${widget.file.refId}',
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Text(
+                          'Attachment Id: ${widget.file.refId}',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
                     ),
-                  ),
+                    if (widget.file.uploadedAt != null) ...[
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            size: 12,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Uploaded: ${DateFormat('MMM dd, yyyy • hh:mm a').format(widget.file.uploadedAt!)}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
                 ),
               ),
               trailing: SizedBox(
