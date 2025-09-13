@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../service/data_service.dart';
 
 import '../../../widgets/attachment_card.dart';
+import '../../../widgets/editable_description.dart';
 import '../../models/ticket.dart';
 import '../../models/ticket_file.dart';
 
@@ -96,18 +97,7 @@ class TicketDetailScreen extends StatelessWidget {
               'Description:',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                ticket.description,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
+            EditableDescription(ticket: ticket),
             const SizedBox(height: 16),
             // Attachments
             Text(
