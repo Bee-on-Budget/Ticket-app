@@ -150,7 +150,6 @@ class _EditableDescriptionState extends State<EditableDescription> {
   }
 
   void _saveChanges() async {
-    _controller.text = _controller.text.trim();
     if (_controller.text == _initialDescription) {
       setState(() {
         _isEditing = false;
@@ -164,6 +163,8 @@ class _EditableDescriptionState extends State<EditableDescription> {
       });
       return;
     }
+
+    _controller.text = _controller.text.trim();
     if (_validate) {
       setState(() {
         _validate = false;
