@@ -20,10 +20,13 @@ class DataService {
     final userId = _auth.currentUser!.uid;
     return _firestore
         .collection('users')
-        .where('userId', isEqualTo: userId)
+        .doc(userId)
         .snapshots()
         .map((snapshot) {
-      return TicketUser.fromJson(snapshot.docs.first.data());
+      if (snapshot.data() == null) {
+        throw Exception('User not found');
+      }
+      return TicketUser.fromJson(snapshot.data()!);
     });
   }
 
@@ -217,8 +220,8 @@ class DataService {
   }
 
   static Future<List<String>> getCompanyPaymentMethods(
-      String? companyName,
-      ) async {
+    String? companyName,
+  ) async {
     if (companyName == null) return [];
 
     try {
@@ -237,6 +240,7 @@ class DataService {
       return [];
     }
   }
+
   static Future<List<String>> getUserPaymentMethods() {
     final userId = _auth.currentUser!.uid;
     return _firestore.collection('users').doc(userId).get().then((doc) {

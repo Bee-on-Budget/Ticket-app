@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ticket_app/src/modules/screens/auth/login/login_page.dart';
 
+import '../../models/ticket_user.dart';
 import '../tickets/new_ticket_screen.dart';
 import '../../models/ticket.dart';
 import '../../../service/data_service.dart';
@@ -21,7 +22,19 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Tickets'),
+        title: StreamBuilder<TicketUser>(
+          stream: DataService.getCurrentUser(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            if(snapshot.connectionState == ConnectionState.waiting){
+              return const Text("Ticket Details...");
+            }
+            final user = snapshot.data!;
+            return Text('Welcome ${user.username}');
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(

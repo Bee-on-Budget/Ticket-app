@@ -25,7 +25,7 @@ class TicketUser {
   factory TicketUser.fromJson(Map<String, dynamic> json) {
     return TicketUser(
       userId: json["uid"] ?? "Unknown uid",
-      username: json["fullName"] ?? "Unknown Username",
+      username: json["username"] ?? "Unknown Username",
       role: UserRole.fromString(json["role"] ?? "Unknown"),
       email: json["email"] ?? "Unknown",
       paymentMethods:
