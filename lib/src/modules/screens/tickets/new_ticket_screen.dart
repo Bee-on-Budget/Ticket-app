@@ -24,6 +24,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   late final FirebaseAuth _auth;
   late final FirebaseStorage _storage;
   static const _maxFiles = 10;
+  bool _attachmentError = false;
 
   final List<AppFile> _selectedFiles = [];
   bool _isUploading = false;
@@ -160,10 +161,35 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                             ),
                           );
                         }),
-                    FileListView(
-                      maxFiles: _maxFiles,
-                      selectedFiles: _selectedFiles,
-                      // setState: setState,
+                    FormFieldOutline(
+                      label: 'Attachments',
+                      isRequired: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FileListView(
+                            maxFiles: _maxFiles,
+                            selectedFiles: _selectedFiles,
+                          ),
+                          if (_attachmentError)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: 20,
+                                top: 4,
+                              ),
+                              child: Text(
+                                "Attachment are required",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                    ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 10),
                     SubmitButton(
@@ -180,7 +206,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
               width: double.infinity,
               height: double.infinity,
               color: Colors.black.withValues(alpha: 0.3),
-              child: Center(
+              child: const Center(
                 child: CircularProgressIndicator(),
               ),
             ),
@@ -189,9 +215,25 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     );
   }
 
-  Future<void> _submitTicket() async {
-    if (!_formKey.currentState!.validate()) return;
+  bool _validate() {
+    bool validateStatus = true;
+    if (!_formKey.currentState!.validate()) validateStatus = false;
 
+    if (_selectedFiles.isEmpty) {
+      setState(() {
+        _attachmentError = true;
+      });
+      validateStatus = false;
+    } else if (_attachmentError) {
+      setState(() {
+        _attachmentError = false;
+      });
+    }
+    return validateStatus;
+  }
+
+  Future<void> _submitTicket() async {
+    if (!_validate()) return;
     final user = _auth.currentUser;
     if (user == null) return;
 
