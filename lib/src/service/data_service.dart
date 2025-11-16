@@ -206,6 +206,37 @@ class DataService {
     });
   }
 
+  static Future<List<String>> getUserCompanies() async {
+    final userId = _auth.currentUser!.uid;
+    return _firestore.collection('users').doc(userId).get().then((doc) {
+      if (!doc.exists) return [];
+      final data = doc.data() as Map<String, dynamic>;
+      final companies = data['companies'] as List<dynamic>?;
+      return companies?.cast<String>() ?? [];
+    });
+  }
+
+  static Future<List<String>> getCompanyPaymentMethods(
+      String? companyName,
+      ) async {
+    if (companyName == null) return [];
+
+    try {
+      final querySnapshot = await _firestore
+          .collection("companies_test")
+          .where("name", isEqualTo: companyName)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) return [];
+
+      final doc = querySnapshot.docs.first; // Get the first matching document
+      final data = doc.data();
+      final paymentMethods = data['paymentMethods'] as List<dynamic>?;
+      return paymentMethods?.cast<String>() ?? [];
+    } catch (e) {
+      return [];
+    }
+  }
   static Future<List<String>> getUserPaymentMethods() {
     final userId = _auth.currentUser!.uid;
     return _firestore.collection('users').doc(userId).get().then((doc) {

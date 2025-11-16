@@ -21,6 +21,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   String _description = "";
   String? _title;
   String? _paymentMethod;
+  String? _company;
+  final List<String> _paymentMethods = [];
   late final FirebaseAuth _auth;
   late final FirebaseStorage _storage;
   static const _maxFiles = 10;
@@ -118,49 +120,101 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                       ),
                     ),
                     FutureBuilder<List<String>>(
-                        future: DataService.getUserPaymentMethods(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              showErrorSnackBar(
-                                context,
-                                'Error while loading the Payment Methods',
-                              );
-                            });
-                          }
-                          final List<String> paymentMethods = [];
-                          if (snapshot.hasData) {
-                            paymentMethods.addAll(snapshot.data!);
-                          }
-                          return FormFieldOutline(
-                            label: 'Payment Method',
-                            isRequired: true,
-                            child: DropdownButtonFormField<String>(
-                              items: paymentMethods
-                                  .map<DropdownMenuItem<String>>(
-                                    (paymentMethod) => DropdownMenuItem(
-                                      value: paymentMethod,
-                                      child: Text(
-                                        paymentMethod,
-                                        style: theme.textTheme.bodyLarge,
-                                      ),
+                      future: DataService.getUserCompanies(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            showErrorSnackBar(
+                              context,
+                              'Error while loading the Company',
+                            );
+                          });
+                        }
+                        final List<String> companies = [];
+                        if (snapshot.hasData) {
+                          companies.addAll(snapshot.data!);
+                        }
+                        return FormFieldOutline(
+                          label: 'Company',
+                          isRequired: true,
+                          child: DropdownButtonFormField<String>(
+                            value: _company,
+                            items: companies
+                                .map<DropdownMenuItem<String>>(
+                                  (company) => DropdownMenuItem(
+                                    value: company,
+                                    child: Text(
+                                      company,
+                                      style: theme.textTheme.bodyLarge,
                                     ),
-                                  )
-                                  .toList(),
-                              onChanged: (paymentMethod) {
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (company) async {
+                              if (company == null) return;
+                              setState(() {
+                                _company = company;
+                                _paymentMethods.clear();
+                              });
+
+                              try {
+                                final List<String> paymentMethods =
+                                    await DataService.getCompanyPaymentMethods(
+                                  company,
+                                );
+
                                 setState(() {
-                                  _paymentMethod = paymentMethod;
+                                  _paymentMethods.addAll(paymentMethods);
                                 });
-                              },
-                              validator: (String? paymentMethod) {
-                                if (paymentMethod == null) {
-                                  return "You need to select a payment method";
-                                }
-                                return null;
-                              },
-                            ),
-                          );
-                        }),
+                              } catch (e) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  showErrorSnackBar(
+                                    context,
+                                    'Error while loading the Payment Methods',
+                                  );
+                                });
+                              }
+                            },
+                            validator: (String? company) {
+                              if (company == null) {
+                                return "You need to select a company";
+                              }
+                              return null;
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    FormFieldOutline(
+                      label: 'Payment Method',
+                      isRequired: true,
+                      child: DropdownButtonFormField<String>(
+                        value: _paymentMethod,
+                        items: _paymentMethods
+                            .map<DropdownMenuItem<String>>(
+                              (paymentMethod) => DropdownMenuItem(
+                                value: paymentMethod,
+                                child: Text(
+                                  paymentMethod,
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (paymentMethod) {
+                          setState(() {
+                            _paymentMethod = paymentMethod;
+                          });
+                        },
+                        validator: (String? paymentMethod) {
+                          if (paymentMethod == null) {
+                            return "You need to select a payment method";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
                     FormFieldOutline(
                       label: 'Attachments',
                       isRequired: true,
