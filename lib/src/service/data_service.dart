@@ -226,7 +226,7 @@ class DataService {
 
     try {
       final querySnapshot = await _firestore
-          .collection("companies_test")
+          .collection("companies")
           .where("name", isEqualTo: companyName)
           .get();
 
