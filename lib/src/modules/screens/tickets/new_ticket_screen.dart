@@ -142,6 +142,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                           isRequired: true,
                           child: DropdownButtonFormField<String>(
                             value: _company,
+                            isExpanded: true,
                             items: companies
                                 .map<DropdownMenuItem<String>>(
                                   (company) => DropdownMenuItem(
@@ -195,6 +196,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                       isRequired: true,
                       child: DropdownButtonFormField<String>(
                         value: _paymentMethod,
+                        isExpanded: true,
                         items: _paymentMethods
                             .map<DropdownMenuItem<String>>(
                               (paymentMethod) => DropdownMenuItem(
