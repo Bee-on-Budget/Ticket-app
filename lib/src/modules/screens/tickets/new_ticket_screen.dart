@@ -158,6 +158,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                               setState(() {
                                 _company = company;
                                 _paymentMethods.clear();
+                                _paymentMethod = null;
                               });
 
                               try {
