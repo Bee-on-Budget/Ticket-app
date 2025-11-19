@@ -316,9 +316,22 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     }
   }
 
-  void init() {
+  void init() async {
     _formKey = GlobalKey<FormState>();
     _auth = FirebaseAuth.instance;
     _storage = FirebaseStorage.instance;
+
+    final companies = await DataService.getUserCompanies();
+
+    if (companies.isNotEmpty) {
+      final paymentMethods = await DataService.getCompanyPaymentMethods(
+        companies.first,
+      );
+
+      setState(() {
+        _paymentMethods.clear();
+        _paymentMethods.addAll(paymentMethods);
+      });
+    }
   }
 }
