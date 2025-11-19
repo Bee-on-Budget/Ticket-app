@@ -134,6 +134,9 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                         if (snapshot.hasData) {
                           companies.addAll(snapshot.data!);
                         }
+                        if (companies.isNotEmpty) {
+                          _company = companies.first;
+                        }
                         return FormFieldOutline(
                           label: 'Company',
                           isRequired: true,
