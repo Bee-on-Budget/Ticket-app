@@ -224,31 +224,10 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                     FormFieldOutline(
                       label: 'Attachments',
                       isRequired: true,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          FileListView(
-                            maxFiles: _maxFiles,
-                            selectedFiles: _selectedFiles,
-                          ),
-                          if (_attachmentError)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left: 20,
-                                top: 4,
-                              ),
-                              child: Text(
-                                "Attachment are required",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.error,
-                                    ),
-                              ),
-                            ),
-                        ],
+                      child: FileListView(
+                        maxFiles: _maxFiles,
+                        selectedFiles: _selectedFiles,
+                        isError: _attachmentError,
                       ),
                     ),
                     const SizedBox(height: 10),
