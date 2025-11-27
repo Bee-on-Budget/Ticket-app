@@ -310,8 +310,12 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
       );
 
       setState(() {
+        _company = companies.first;
         _paymentMethods.clear();
         _paymentMethods.addAll(paymentMethods);
+        if (paymentMethods.isNotEmpty) {
+          _paymentMethod = paymentMethods.first;
+        }
       });
     }
   }
