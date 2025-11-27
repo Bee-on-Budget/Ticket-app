@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:web/web.dart' as web;
@@ -13,6 +14,8 @@ import 'functions.dart';
 
 const _allowedExtensions = ['png', 'jpg', 'jpeg', 'pdf'];
 const _dialogTitle = 'Select File';
+const _maxFileSizeMB = 5;
+const _maxFileSizeBytes = _maxFileSizeMB * 1024 * 1024;
 
 Future<void> handleDownload(BuildContext context, TicketFile file) async {
   try {
@@ -98,8 +101,6 @@ Future<void> pickFiles(
   List<AppFile> selectedFiles,
   void Function(void Function()) setState,
 ) async {
-  const maxFileSizeMB = 5;
-  const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;
   try {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
@@ -122,7 +123,7 @@ Future<void> pickFiles(
 
       final overSizedFiles = result.files
           .where(
-            (file) => file.size > maxFileSizeBytes,
+            (file) => file.size > _maxFileSizeBytes,
           )
           .toList();
 
@@ -130,7 +131,7 @@ Future<void> pickFiles(
         showErrorSnackBar(
           context,
           "${overSizedFiles.length} file(s) exceed "
-          "${maxFileSizeBytes ~/ 1024 ~/ 1024}MB limits",
+          "${_maxFileSizeBytes ~/ 1024 ~/ 1024}MB limits",
         );
         return;
       }
@@ -177,4 +178,99 @@ String _getDownloadUrl(String originalUrl) {
     return '${originalUrl.replaceFirst(uri.path, Uri.encodeFull(uri.path))}?alt=media';
   }
   return originalUrl;
+}
+
+Future<void> dragDropFiles(
+  int maxFiles,
+  BuildContext context,
+  List<AppFile> selectedFiles,
+  List<DropzoneFileInterface>? files,
+  DropzoneViewController controller,
+  void Function(void Function()) setState,
+) async {
+  if (files == null || files.isEmpty) {
+    if (context.mounted) {
+      showErrorSnackBar(context, "No files to add");
+    }
+    return;
+  }
+
+  final int remainingSlots = maxFiles - selectedFiles.length;
+
+  if (remainingSlots <= 0) {
+    if (context.mounted) {
+      showErrorSnackBar(
+          context, "You already added the maximum of $maxFiles files.");
+    }
+    return;
+  }
+
+  if (files.length > remainingSlots) {
+    if (context.mounted) {
+      showErrorSnackBar(
+        context,
+        "You can only add $remainingSlots more file(s).",
+      );
+    }
+    return;
+  }
+
+  try {
+    // ---- Validate file extensions ----
+    final List<String> extensions =
+        files.map((file) => file.name.split('.').last.toLowerCase()).toList();
+
+    final invalidExtensions = extensions.where(
+      (ext) => !_allowedExtensions.contains(ext),
+    );
+
+    if (invalidExtensions.isNotEmpty) {
+      if (context.mounted) {
+        showErrorSnackBar(
+          context,
+          "${invalidExtensions.length} file(s) have an unsupported type.",
+        );
+      }
+      return;
+    }
+
+    // ---- Validate file sizes ----
+    final overSizedFiles =
+        files.where((file) => file.size > _maxFileSizeBytes).toList();
+
+    if (overSizedFiles.isNotEmpty) {
+      if (context.mounted) {
+        showErrorSnackBar(
+          context,
+          "${overSizedFiles.length} file(s) exceed "
+          "${_maxFileSizeBytes ~/ 1024 ~/ 1024}MB limit",
+        );
+      }
+      return;
+    }
+
+    // ---- Read all file bytes in parallel ----
+    final List<Uint8List> bytesList = await Future.wait(
+      files.map((file) => controller.getFileData(file)),
+    );
+
+    // ---- Convert to AppFile objects ----
+    final List<AppFile> webFiles = [
+      for (int i = 0; i < files.length; i++)
+        WebFile(
+          name: files[i].name,
+          bytes: bytesList[i],
+          size: files[i].size,
+        ),
+    ];
+
+    // ---- Update state ----
+    setState(() {
+      selectedFiles.addAll(webFiles);
+    });
+  } catch (e) {
+    if (context.mounted) {
+      showErrorSnackBar(context, "Error selecting files: ${e.toString()}");
+    }
+  }
 }
