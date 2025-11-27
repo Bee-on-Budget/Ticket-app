@@ -72,19 +72,19 @@ Future<AppFile?> pickAFile(
 
     if (result != null) {
       final platformFile = result.files.first;
-        if (kIsWeb || platformFile.path == null) {
-          selectedFile = WebFile(
-            name: platformFile.name,
-            bytes: platformFile.bytes!,
-            size: platformFile.size,
-          );
-        } else {
-          selectedFile = LocalFile(
-            name: platformFile.name,
-            file: File(platformFile.path!),
-            size: platformFile.size,
-          );
-        }
+      if (kIsWeb || platformFile.path == null) {
+        selectedFile = WebFile(
+          name: platformFile.name,
+          bytes: platformFile.bytes!,
+          size: platformFile.size,
+        );
+      } else {
+        selectedFile = LocalFile(
+          name: platformFile.name,
+          file: File(platformFile.path!),
+          size: platformFile.size,
+        );
+      }
       return selectedFile;
     }
   } catch (e) {
