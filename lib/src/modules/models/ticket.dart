@@ -14,6 +14,7 @@ class Ticket {
     required this.publisher,
     required this.createdDate,
     this.files = const [],
+    this.customFields = const {},
   });
 
   final String ticketId;
@@ -25,6 +26,7 @@ class Ticket {
   final String publisher;
   final DateTime createdDate;
   final List<TicketFile> files;
+  final Map<String, dynamic> customFields;
 
   Ticket copyWith({
     String? ticketId,
@@ -36,6 +38,7 @@ class Ticket {
     String? publisher,
     DateTime? createdDate,
     List<TicketFile>? files,
+    Map<String, dynamic>? customFields,
   }) =>
       Ticket(
         ticketId: ticketId ?? this.ticketId,
@@ -47,6 +50,7 @@ class Ticket {
         publisher: publisher ?? this.publisher,
         createdDate: createdDate ?? this.createdDate,
         files: files ?? this.files,
+        customFields: customFields ?? this.customFields,
       );
 
   factory Ticket.fromJson({
@@ -56,6 +60,7 @@ class Ticket {
     String? publisher,
   }) {
     // SynchronizedTime.initialize();
+    final customFields = (json['customFields'] as Map<String, dynamic>?) ?? {};
     return Ticket(
       ticketId: ticketId,
       title: json['title'] ?? "No Title",
@@ -67,6 +72,7 @@ class Ticket {
       createdDate: (json['createdDate'] as Timestamp?)?.toDate() ??
           Timestamp.now().toDate(),
       files: files,
+      customFields: customFields,
     );
   }
 
@@ -79,6 +85,7 @@ class Ticket {
       'status': status.toString(),
       'publisher': publisher,
       'createdDate': createdDate.toIso8601String(),
+      'customFields': customFields,
     };
   }
 }

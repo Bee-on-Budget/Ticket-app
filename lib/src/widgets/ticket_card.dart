@@ -100,6 +100,62 @@ class TicketCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
 
+              // Custom Fields
+              if (ticket.customFields.isNotEmpty)
+                Column(
+                  spacing: 6,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 4),
+                    ...ticket.customFields.entries.map((entry) {
+                      final key = entry.key;
+                      final value = entry.value;
+                      final valueList = value is List ? value : [value];
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            key,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.7),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: valueList
+                                .map((val) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.primary
+                                            .withValues(alpha: 0.1),
+                                        borderRadius:
+                                            BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        val.toString(),
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                          color:
+                                              theme.colorScheme.primary,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ],
+                ),
+
               const SizedBox(height: 4),
 
               // Footer with date

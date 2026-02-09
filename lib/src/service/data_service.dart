@@ -135,6 +135,7 @@ class DataService {
     required String paymentMethod,
     required List<AppFile> selectedFiles,
     required FirebaseStorage storage,
+    Map<String, dynamic>? customFields,
   }) async {
     final String ticketRefId = await generateUniqueId();
     final ticketRef = await _firestore.collection('tickets').add({
@@ -145,6 +146,7 @@ class DataService {
       'paymentMethod': paymentMethod,
       'createdDate': Timestamp.now(),
       'status': TicketStatus.open.toString(),
+      'customFields': customFields ?? {},
     });
     if (selectedFiles.isNotEmpty) {
       final filesCollection = ticketRef.collection('files');
@@ -238,6 +240,28 @@ class DataService {
       return paymentMethods?.cast<String>() ?? [];
     } catch (e) {
       return [];
+    }
+  }
+
+  static Future<Map<String, dynamic>> getCompanyCustomFields(
+    String? companyName,
+  ) async {
+    if (companyName == null) return {};
+
+    try {
+      final querySnapshot = await _firestore
+          .collection("companies")
+          .where("name", isEqualTo: companyName)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) return {};
+
+      final doc = querySnapshot.docs.first;
+      final data = doc.data();
+      final customFields = data['customFields'] as Map<String, dynamic>? ?? {};
+      return customFields;
+    } catch (e) {
+      return {};
     }
   }
 

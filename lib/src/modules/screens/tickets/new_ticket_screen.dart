@@ -23,6 +23,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
   String? _paymentMethod;
   String? _company;
   final List<String> _paymentMethods = [];
+  final Map<String, dynamic> _customFieldValues = {};
+  Map<String, dynamic> _availableCustomFields = {};
   late final FirebaseAuth _auth;
   late final FirebaseStorage _storage;
   static const _maxFiles = 10;
@@ -160,6 +162,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                                 _company = company;
                                 _paymentMethods.clear();
                                 _paymentMethod = null;
+                                _customFieldValues.clear();
+                                _availableCustomFields.clear();
                               });
 
                               try {
@@ -167,9 +171,20 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                                     await DataService.getCompanyPaymentMethods(
                                   company,
                                 );
+                                final Map<String, dynamic> customFields =
+                                    await DataService.getCompanyCustomFields(
+                                  company,
+                                );
 
                                 setState(() {
                                   _paymentMethods.addAll(paymentMethods);
+                                  _availableCustomFields = customFields;
+                                  // Initialize custom field values
+                                  customFields.forEach((key, value) {
+                                    if (value is List && value.isNotEmpty) {
+                                      _customFieldValues[key] = value.first;
+                                    }
+                                  });
                                 });
                               } catch (e) {
                                 WidgetsBinding.instance
@@ -221,6 +236,48 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                         },
                       ),
                     ),
+                    // Custom Fields
+                    if (_availableCustomFields.isNotEmpty)
+                      ..._availableCustomFields.entries.map((entry) {
+                        final fieldName = entry.key;
+                        final fieldValues = entry.value;
+                        final valueList =
+                            fieldValues is List ? fieldValues : [fieldValues];
+
+                        return FormFieldOutline(
+                          label: fieldName,
+                          child: DropdownButtonFormField<String>(
+                            value: _customFieldValues[fieldName],
+                            isExpanded: true,
+                            items: [
+                              DropdownMenuItem<String>(
+                                value: null,
+                                child: Text('Select $fieldName (Optional)'),
+                              ),
+                              ...valueList
+                                  .map<DropdownMenuItem<String>>(
+                                    (value) => DropdownMenuItem(
+                                      value: value.toString(),
+                                      child: Text(
+                                        value.toString(),
+                                        style: theme.textTheme.bodyLarge,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                if (value == null) {
+                                  _customFieldValues.remove(fieldName);
+                                } else {
+                                  _customFieldValues[fieldName] = value;
+                                }
+                              });
+                            },
+                          ),
+                        );
+                      }).toList(),
                     FormFieldOutline(
                       label: 'Attachments',
                       isRequired: true,
@@ -286,6 +343,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         paymentMethod: _paymentMethod!,
         selectedFiles: _selectedFiles,
         storage: _storage,
+        customFields: _customFieldValues,
       );
       if (!mounted) return;
       Navigator.of(context).pop();
@@ -308,6 +366,9 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
       final paymentMethods = await DataService.getCompanyPaymentMethods(
         companies.first,
       );
+      final customFields = await DataService.getCompanyCustomFields(
+        companies.first,
+      );
 
       setState(() {
         _company = companies.first;
@@ -316,6 +377,13 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         if (paymentMethods.isNotEmpty) {
           _paymentMethod = paymentMethods.first;
         }
+        _availableCustomFields = customFields;
+        // Initialize custom field values
+        customFields.forEach((key, value) {
+          if (value is List && value.isNotEmpty) {
+            _customFieldValues[key] = value.first;
+          }
+        });
       });
     }
   }
