@@ -135,15 +135,13 @@ class TicketCard extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         color: theme.colorScheme.primary
                                             .withValues(alpha: 0.1),
-                                        borderRadius:
-                                            BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
                                         val.toString(),
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                          color:
-                                              theme.colorScheme.primary,
+                                        style:
+                                            theme.textTheme.bodySmall?.copyWith(
+                                          color: theme.colorScheme.primary,
                                           fontSize: 11,
                                         ),
                                       ),
